@@ -1,6 +1,7 @@
-import { Entity, BaseEntity } from "typeorm";
+import { Entity, BaseEntity, ObjectIdColumn } from "typeorm";
 
 @Entity()
 export class Service extends BaseEntity{
-	
+	@ObjectIdColumn()
+	_id: string;
 }
