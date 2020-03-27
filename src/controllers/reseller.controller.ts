@@ -384,7 +384,9 @@ export class ResellerController extends BaseController {
 		}
 
 		const connection: Connection = await self.getConnection();
-		const saved: Ticket = await ticket.save();
+		const entityManager = self.getManager();
+
+		const saved = await entityManager.save(Ticket, ticket);
 
 		if (!saved) {
 			connection.close();
@@ -412,6 +414,7 @@ export class ResellerController extends BaseController {
 			connection.close();
 			return response.status(401).json({message: "could_not_send_email"});
 		}
+
 		connection.close();
 		return response.status(200).json({ message: "ticket has been created" });
 	}
