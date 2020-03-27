@@ -397,7 +397,6 @@ export class ResellerController extends BaseController {
 
 		let template = handlebars.compile(file);
 		let compiled = template({ "qr": saved.fullPath });
-
 		let mailer: Mailer = new Mailer();
 
 		let options: mailOptions = {
@@ -406,9 +405,9 @@ export class ResellerController extends BaseController {
 			subject: 'Tu código QR',
 			html: compiled
 		}
-
-		await mailer.sendMail(options);
+		
 		connection.close();
+		await mailer.sendMail(options);
 		return response.status(200).json({ message: "ticket has been created" });
 	}
 
