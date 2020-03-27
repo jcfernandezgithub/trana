@@ -4,7 +4,7 @@
    "description": "monroe web service",
    "main": "index.js",
    "scripts": {
-      "build": "tsc",
+      "build": "mkdir dist/uploads && tsc",
       "start": "node dist/index.js"
    },
    "author": "jcdeveloper",

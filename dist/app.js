@@ -53,9 +53,8 @@ var App = /** @class */ (function (_super) {
         ]);
     };
     App.prototype.init = function () {
-        var port = 4000;
-        this.close = this.app.listen(port, function () {
-            console.log('Server listening on port: ' + port);
+        this.close = this.app.listen(process.env.PORT, function () {
+            console.log('Server listening on port: ' + process.env.PORT);
         });
     };
     App.prototype.initSocket = function () {
