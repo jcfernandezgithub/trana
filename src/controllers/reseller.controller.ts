@@ -375,7 +375,7 @@ export class ResellerController extends BaseController {
 		ticket.opening = opening;
 		ticket.expire = expire;
 
-		let fileLocation = 'dist/uploads/' + ticket.owner;
+		let fileLocation = './uploads/' + ticket.owner;
 		let fileName = uuidv4() + '.jpeg';
 		ticket.fullPath = "uploads/" + ticket.owner + '/' + fileName;
 

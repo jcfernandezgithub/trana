@@ -9,7 +9,7 @@ var Mailer = /** @class */ (function () {
         this.transporter = nodemailer_1.default.createTransport({
             host: 'smtp.hostinger.com.ar',
             port: 587,
-            secure: true,
+            secure: false,
             auth: {
                 user: 'jcfernandez@jcdeveloper.net',
                 pass: '123456'
