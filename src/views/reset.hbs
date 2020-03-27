@@ -1,0 +1,27 @@
+<div class="container">
+	<div class="row" style="height: 100%;">
+
+		<div class="col-lg-5 col-md-5 col-sm-10 col-xs-10 mx-auto align-self-center">
+
+			<div class="card rounded-0">
+
+				<div class="card-body bg-light">
+					<p class="text-uppercase text-center lead"><strong>New password</strong></p>
+					<form class="form-group rounded-0" data-toggle="validator" action="api/reseller/password" method="POST">
+
+						<input type="hidden" value="{{email}}" class="form-control rounded-0" name="email" aria-describedby="email">
+
+						<input type="hidden" value="{{token}}" class="form-control rounded-0" name="token" aria-describedby="token">
+
+						<input type="password" data-minlength="6" class="form-control" name="password" placeholder="New password"
+							required>
+						<div class="help-block">Minimum of 6 characters</div>
+
+						<button type="submit" class="btn btn-block bg-primary text-uppercase" style="color:white;">Send</button>
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
