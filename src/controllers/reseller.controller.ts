@@ -406,8 +406,14 @@ export class ResellerController extends BaseController {
 			html: compiled
 		}
 		
+		
+		const sent = await mailer.sendMail(options);
+
+		if(!sent) {
+			connection.close();
+			return response.status(401).json({message: "could_not_send_email"});
+		}
 		connection.close();
-		await mailer.sendMail(options);
 		return response.status(200).json({ message: "ticket has been created" });
 	}
 
