@@ -69,6 +69,11 @@ export class ResellerController extends BaseController {
 		return response.status(200).json(savedSession);
 	}
 
+	@Get('signout')
+	public async signout(request: Request, response: Response) {
+		return response.status(200).json({ message: "signed out" });
+	}
+
 	@Post('create')
 	public async create(request: Request, response: Response) {
 
@@ -407,12 +412,12 @@ export class ResellerController extends BaseController {
 			subject: 'Tu código QR',
 			html: compiled
 		}
-		
+
 		const sent = await mailer.sendMail(options);
 
-		if(!sent) {
+		if (!sent) {
 			connection.close();
-			return response.status(401).json({message: "could_not_send_email"});
+			return response.status(401).json({ message: "could_not_send_email" });
 		}
 
 		connection.close();
