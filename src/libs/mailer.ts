@@ -16,7 +16,6 @@ export class Mailer {
 		this.transporter = nodemailer.createTransport({
 			host: 'smtp.hostinger.com.ar',
 			port: 587,
-			secure: true,
 			auth: {
 				user: 'jcfernandez@jcdeveloper.net',
 				pass: '123456'
