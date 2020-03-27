@@ -40,9 +40,8 @@ export default class App extends Server {
 	}
 
 	init() {
-		const port = 4000;
-		this.close = this.app.listen(port, () => {
-			console.log('Server listening on port: ' + port);
+		this.close = this.app.listen(process.env.PORT, () => {
+			console.log('Server listening on port: ' + process.env.PORT);
 		});
 	}
 
