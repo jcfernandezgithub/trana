@@ -475,7 +475,7 @@ var ResellerController = /** @class */ (function (_super) {
     };
     ResellerController.prototype.generateqr = function (request, response) {
         return __awaiter(this, void 0, void 0, function () {
-            var self, _a, email, opening, expire, code, ticket, fileLocation, fileName, connection, saved, file, template, compiled, mailer, options;
+            var self, _a, email, opening, expire, code, ticket, fileLocation, fileName, connection, entityManager, saved, file, template, compiled, mailer, options, sent;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
@@ -498,7 +498,8 @@ var ResellerController = /** @class */ (function (_super) {
                         return [4 /*yield*/, self.getConnection()];
                     case 1:
                         connection = _b.sent();
-                        return [4 /*yield*/, ticket.save()];
+                        entityManager = self.getManager();
+                        return [4 /*yield*/, entityManager.save(ticket_entity_1.Ticket, ticket)];
                     case 2:
                         saved = _b.sent();
                         if (!saved) {
@@ -518,10 +519,14 @@ var ResellerController = /** @class */ (function (_super) {
                             subject: 'Tu código QR',
                             html: compiled
                         };
-                        connection.close();
                         return [4 /*yield*/, mailer.sendMail(options)];
                     case 4:
-                        _b.sent();
+                        sent = _b.sent();
+                        if (!sent) {
+                            connection.close();
+                            return [2 /*return*/, response.status(401).json({ message: "could_not_send_email" })];
+                        }
+                        connection.close();
                         return [2 /*return*/, response.status(200).json({ message: "ticket has been created" })];
                 }
             });
