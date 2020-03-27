@@ -1,5 +1,4 @@
 import fs from 'fs';
-import path from "path";
 import jwt from 'jsonwebtoken';
 import QRGenerator from 'qrcode';
 import { v4 as uuidv4 } from 'uuid';
@@ -361,6 +360,7 @@ export class ResellerController extends BaseController {
 	}
 
 	@Post('generateqr')
+	@Middleware([session])
 	public async generateqr(request: Request, response: Response) {
 		const self = this;
 		const { email, opening } = request.body;

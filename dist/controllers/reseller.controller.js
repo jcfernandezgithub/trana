@@ -518,10 +518,10 @@ var ResellerController = /** @class */ (function (_super) {
                             subject: 'Tu código QR',
                             html: compiled
                         };
+                        connection.close();
                         return [4 /*yield*/, mailer.sendMail(options)];
                     case 4:
                         _b.sent();
-                        connection.close();
                         return [2 /*return*/, response.status(200).json({ message: "ticket has been created" })];
                 }
             });
@@ -584,6 +584,7 @@ var ResellerController = /** @class */ (function (_super) {
     ], ResellerController.prototype, "delete", null);
     __decorate([
         core_1.Post('generateqr'),
+        core_1.Middleware([session_middleware_1.session]),
         __metadata("design:type", Function),
         __metadata("design:paramtypes", [Object, Object]),
         __metadata("design:returntype", Promise)
