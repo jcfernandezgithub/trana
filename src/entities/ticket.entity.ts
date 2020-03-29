@@ -27,6 +27,9 @@ export class Ticket extends BaseEntity {
 	fullPath: string;
 
 	@Column()
+	file: string;
+
+	@Column()
 	expire: Date;
 
 	@CreateDateColumn({

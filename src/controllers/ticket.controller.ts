@@ -1,17 +1,16 @@
-import { BaseController } from "./base.controller";
-import { Controller, Post, Middleware } from "@overnightjs/core";
-import { Response, Request } from "express";
-import { Connection, EntityManager } from "typeorm";
-import { Ticket } from "../entities/ticket.entity";
-import moment from "moment";
-import { session } from "../middlewares/session.middleware";
-import { QRCode } from "../libs/qr.code";
-import { Mailer, mailOptions } from "../libs/mailer";
-import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
+import moment from "moment";
 import QRGenerator from 'qrcode';
 import handlebars from 'handlebars';
-
+import { v4 as uuidv4 } from 'uuid';
+import { QRCode } from "../libs/qr.code";
+import { Response, Request } from "express";
+import { Ticket } from "../entities/ticket.entity";
+import { BaseController } from "./base.controller";
+import { Connection, EntityManager } from "typeorm";
+import { Mailer, mailOptions } from "../libs/mailer";
+import { session } from "../middlewares/session.middleware";
+import { Controller, Post, Middleware, Delete } from "@overnightjs/core";
 
 @Controller('api/ticket')
 export class TicketController extends BaseController {
@@ -50,6 +49,7 @@ export class TicketController extends BaseController {
 		let fileLocation = './uploads/' + ticket.owner;
 		let fileName = uuidv4() + '.jpeg';
 		ticket.fullPath = "uploads/" + ticket.owner + '/' + fileName;
+		ticket.file = fileName;
 
 		if (!fs.existsSync(fileLocation)) {
 			fs.mkdirSync(fileLocation);
@@ -89,6 +89,11 @@ export class TicketController extends BaseController {
 
 		connection.close();
 		return response.status(200).json({ message: "ticket has been created" });
+	}
+
+	@Delete('delete')
+	public async delete(request: Request, response: Response) {
+
 	}
 
 }
