@@ -368,7 +368,7 @@ export class ResellerController extends BaseController {
 	@Middleware([session])
 	public async generateqr(request: Request, response: Response) {
 		const self = this;
-		const { email, opening } = request.body;
+		const { email, opening, reseller } = request.body;
 		const expire = new Date(moment().add(2, 'weeks').format());
 		let code = new QRCode().generate(email, expire);
 
@@ -377,6 +377,7 @@ export class ResellerController extends BaseController {
 		ticket.code = code;
 		ticket.owner = email;
 		ticket.used = false;
+		ticket.createdBy = reseller;
 		ticket.opening = opening;
 		ticket.expire = expire;
 

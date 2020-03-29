@@ -13,6 +13,9 @@ export class Ticket extends BaseEntity {
 	owner: string;
 
 	@Column()
+	createdBy: string;
+
+	@Column()
 	opening: string;
 
 	@Column({

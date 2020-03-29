@@ -35,7 +35,8 @@ export default class App extends Server {
 		super.addControllers([
 			router.resellerController,
 			router.authController,
-			router.adminController
+			router.adminController,
+			router.ticketController
 		]);
 	}
 
