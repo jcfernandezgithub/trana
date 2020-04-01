@@ -1,7 +1,7 @@
-import { Entity, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn, Connection, MongoRepository, OneToOne, JoinColumn } from "typeorm";
-import { BaseEntity } from "./base.entity";
 import bcrypt from 'bcryptjs';
 import { ObjectID } from "mongodb";
+import { BaseEntity } from "./base.entity";
+import { Entity, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn } from "typeorm";
 
 @Entity()
 export class Reseller extends BaseEntity {

@@ -16,6 +16,10 @@ import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/c
 @Controller('api/reseller')
 export class ResellerController extends BaseController {
 
+	constructor() {
+		super();
+	}
+
 	@Post('signin')
 	public async signin(request: Request, response: Response) {
 
