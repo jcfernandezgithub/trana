@@ -99,18 +99,15 @@ export class TicketController extends BaseController {
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
 
-		let res;
+		const deleted = await entityManager.delete(Ticket, { _id: id });
 
-		entityManager.delete(Ticket, { _id: id })
-			.then(() => {
-				res = "deleted";
-			})
-			.catch(error => {
-				res = "deletion failed";
-			});
+		if (deleted) {
+			connection.close();
+			return response.status(200).json({ message: "deletion_failed" });
+		}
 
 		connection.close();
-		return response.status(200).json({ message: res });
+		return response.status(200).json({ message: "ticket has been deleted" });
 	}
 
 	@Get('resend/:id')
