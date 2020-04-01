@@ -20,9 +20,7 @@ export class Reseller extends BaseEntity {
 	})
 	public status: boolean;
 
-	@Column({
-		default: false
-	})
+	@Column()
 	public role: string;
 
 	@Column({
