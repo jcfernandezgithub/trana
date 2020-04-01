@@ -1,10 +1,11 @@
 import { Entity, ObjectIdColumn, Column, BaseEntity, CreateDateColumn, UpdateDateColumn } from "typeorm";
+import { ObjectId } from "mongodb";
 
 @Entity()
 export class Ticket extends BaseEntity {
 
 	@ObjectIdColumn()
-	_id: string;
+	_id: ObjectId;
 
 	@Column()
 	code: string;

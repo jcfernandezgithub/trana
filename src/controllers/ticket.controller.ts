@@ -7,10 +7,11 @@ import { QRCode } from "../libs/qr.code";
 import { Response, Request } from "express";
 import { Ticket } from "../entities/ticket.entity";
 import { BaseController } from "./base.controller";
-import { Connection, EntityManager, getMongoRepository } from "typeorm";
+import { Connection, EntityManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { session } from "../middlewares/session.middleware";
 import { Controller, Post, Middleware, Delete, Get } from "@overnightjs/core";
+import { ObjectId, ObjectID } from 'mongodb';
 
 @Controller('api/ticket')
 export class TicketController extends BaseController {
@@ -99,11 +100,11 @@ export class TicketController extends BaseController {
 	@Get('resend/:id')
 	public async resend(request: Request, response: Response) {
 		const self = this;
-		const id = request.params.id;
+		const id: ObjectId = new ObjectId(request.params.id);
 		const connection: Connection = await self.getConnection();
-		const ticketRepository = getMongoRepository(Ticket);
+		const entityManager: EntityManager = self.getManager();
 
-		let ticket: Ticket | undefined = await ticketRepository.findOne({ _id: id });
+		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
 
 		if (!ticket) {
 			connection.close();
