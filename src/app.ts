@@ -9,7 +9,6 @@ import SocketIO from 'socket.io';
 import hbs from "express-handlebars";
 import { Server } from "@overnightjs/core";
 import { Router } from "./router/router.class";
-import { createConnection } from 'typeorm';
 
 export default class App extends Server {
 	private close: http.Server;
@@ -44,8 +43,8 @@ export default class App extends Server {
 	}
 
 	init() {
-		this.close = this.app.listen(process.env.port, () => {
-			console.log('Server listening on port: ' + process.env.port);
+		this.close = this.app.listen(process.env.PORT || 5000, () => {
+			console.log('Server listening on port: ' + process.env.PORT);
 		});
 	}
 
