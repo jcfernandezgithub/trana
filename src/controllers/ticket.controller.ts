@@ -10,7 +10,8 @@ import { BaseController } from "./base.controller";
 import { Connection, EntityManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { session } from "../middlewares/session.middleware";
-import { Controller, Post, Middleware, Delete } from "@overnightjs/core";
+import { Controller, Post, Middleware, Delete, Get } from "@overnightjs/core";
+import Mail from 'nodemailer/lib/mailer';
 
 @Controller('api/ticket')
 export class TicketController extends BaseController {
@@ -93,7 +94,45 @@ export class TicketController extends BaseController {
 
 	@Delete('delete')
 	public async delete(request: Request, response: Response) {
+		return response.status(200).json({ message: "delete" });
+	}
 
+	@Get('resend/:id')
+	public async resend(request: Request, response: Response) {
+		const self = this;
+		const id = request.params.id;
+		const connection: Connection = await self.getConnection();
+		const entityManager: EntityManager = self.getManager();
+
+		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
+
+		if (!ticket) {
+			connection.close();
+			return response.status(400).json({ message: "not_found" });
+		}
+		
+		let file = fs.readFileSync('dist/templates/template.hbs', 'utf8');
+
+		let template = handlebars.compile(file);
+		let compiled = template({ "qr": ticket.fullPath });
+		let mailer: Mailer = new Mailer();
+
+		let options: mailOptions = {
+			from: '"NodeJS" <jcfernandez@jcdeveloper.net>',
+			to: ticket.owner,
+			subject: 'Tu código QR',
+			html: compiled
+		}
+
+		const sent = await mailer.sendMail(options);
+
+		if (!sent) {
+			connection.close();
+			return response.status(401).json({ message: "could_not_send_email" });
+		}
+
+		connection.close();
+		return response.status(200).json({ message: "ticket has been sent" });
 	}
 
 }
