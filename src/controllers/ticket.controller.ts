@@ -92,9 +92,17 @@ export class TicketController extends BaseController {
 		return response.status(200).json({ message: "ticket has been created" });
 	}
 
-	@Delete('delete')
+	@Delete('delete/:id')
 	public async delete(request: Request, response: Response) {
-		return response.status(200).json({ message: "delete" });
+		const self = this;
+		const id: ObjectId = new ObjectId(request.params.id);
+		const connection: Connection = await self.getConnection();
+		const entityManager: EntityManager = self.getManager();
+
+		const deleted = await entityManager.delete(Ticket, { _id: id });
+
+		connection.close();
+		return response.status(200).json({ message: deleted });
 	}
 
 	@Get('resend/:id')
@@ -110,7 +118,7 @@ export class TicketController extends BaseController {
 			connection.close();
 			return response.status(400).json({ message: "not_found" });
 		}
-		
+
 		let file = fs.readFileSync('dist/templates/template.hbs', 'utf8');
 
 		let template = handlebars.compile(file);
