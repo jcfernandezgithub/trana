@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 import moment, { Moment } from 'moment';
 import { Response, Request } from "express";
 import { Reset } from '../entities/reset.entity';
@@ -10,7 +11,7 @@ import { mailOptions, Mailer } from '../libs/mailer';
 import { Reseller } from "../entities/reseller.entity";
 import { session } from '../middlewares/session.middleware';
 import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/core";
-import { ObjectId } from 'mongodb';
+
 
 @Controller('api/reseller')
 export class ResellerController extends BaseController {
@@ -359,14 +360,17 @@ export class ResellerController extends BaseController {
 		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 
-		const deleted = await self.entityManager.delete(Reseller, { _id: id });
+		const connection: Connection = await self.getConnection();
+		const entityManager: EntityManager = self.getManager();
+
+		const deleted = await entityManager.delete(Reseller, { _id: id });
 
 		if (!deleted) {
-			self.connection.close();
+			connection.close();
 			return response.status(400).json({ message: "deletion failed" });
 		}
 
-		self.connection.close();
+		connection.close();
 		return response.status(200).json({ message: "reseller has been deleted" });
 	}
 
