@@ -1,7 +1,7 @@
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn, Connection, MongoRepository, OneToOne, JoinColumn } from "typeorm";
 import { BaseEntity } from "./base.entity";
 import bcrypt from 'bcryptjs';
-import { ObjectID, ObjectId } from "mongodb";
+import { ObjectID } from "mongodb";
 
 @Entity()
 export class Reseller extends BaseEntity {
@@ -19,6 +19,11 @@ export class Reseller extends BaseEntity {
 		default: false
 	})
 	public status: boolean;
+
+	@Column({
+		default: false
+	})
+	public role: string;
 
 	@Column({
 		unique: true

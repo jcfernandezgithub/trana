@@ -10,6 +10,7 @@ import { mailOptions, Mailer } from '../libs/mailer';
 import { Reseller } from "../entities/reseller.entity";
 import { session } from '../middlewares/session.middleware';
 import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/core";
+import { ObjectId } from 'mongodb';
 
 @Controller('api/reseller')
 export class ResellerController extends BaseController {
@@ -353,9 +354,20 @@ export class ResellerController extends BaseController {
 		return response.status(200).json(res);
 	}
 
-	@Delete('delete/:email')
+	@Delete('delete/:id')
 	public async delete(request: Request, response: Response) {
+		const self = this;
+		const id: ObjectId = new ObjectId(request.params.id);
 
+		const deleted = await self.entityManager.delete(Reseller, { _id: id });
+
+		if (!deleted) {
+			self.connection.close();
+			return response.status(400).json({ message: "deletion failed" });
+		}
+
+		self.connection.close();
+		return response.status(200).json({ message: "reseller has been deleted" });
 	}
 
 }

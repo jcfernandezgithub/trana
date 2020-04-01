@@ -1,6 +1,7 @@
 import fs from 'fs';
 import moment from "moment";
 import QRGenerator from 'qrcode';
+import { ObjectId } from 'mongodb';
 import handlebars from 'handlebars';
 import { v4 as uuidv4 } from 'uuid';
 import { QRCode } from "../libs/qr.code";
@@ -11,20 +12,24 @@ import { Connection, EntityManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { session } from "../middlewares/session.middleware";
 import { Controller, Post, Middleware, Delete, Get } from "@overnightjs/core";
-import { ObjectId, ObjectID } from 'mongodb';
+
 
 @Controller('api/ticket')
 export class TicketController extends BaseController {
 
-	@Post('show/:email')
+	@Get('show/:email')
 	public async show(request: Request, response: Response) {
 		const self = this;
 		const email = request.params.email;
-
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
 
 		let tickets: Ticket[] = await entityManager.find(Ticket, { createdBy: email });
+
+		if (!tickets) {
+			connection.close();
+			return response.status(400).json({ message: 'not_found' });
+		}
 
 		connection.close();
 		return response.status(200).json(tickets);
