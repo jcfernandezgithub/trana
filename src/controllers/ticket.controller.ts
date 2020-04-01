@@ -101,7 +101,7 @@ export class TicketController extends BaseController {
 
 		const deleted = await entityManager.delete(Ticket, { _id: id });
 
-		if (deleted) {
+		if (!deleted) {
 			connection.close();
 			return response.status(200).json({ message: "deletion_failed" });
 		}
