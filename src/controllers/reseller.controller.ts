@@ -12,7 +12,6 @@ import { Reseller } from "../entities/reseller.entity";
 import { session } from '../middlewares/session.middleware';
 import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/core";
 
-
 @Controller('api/reseller')
 export class ResellerController extends BaseController {
 
@@ -314,6 +313,11 @@ export class ResellerController extends BaseController {
 
 		connection.close();
 		return response.json(res);
+	}
+
+	@Post('upload')
+	public async upload(request: Request, response: Response) {
+		return response.status(200).json({ message: "Image has been uploaded" });
 	}
 
 	@Get('verify/:email/:token')
