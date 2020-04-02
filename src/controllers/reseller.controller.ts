@@ -1,7 +1,5 @@
-import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-; import { v4 as uuidv4 } from 'uuid';
 import moment, { Moment } from 'moment'
 import { Response, Request } from "express";
 import { Reset } from '../entities/reset.entity';
