@@ -378,4 +378,24 @@ export class ResellerController extends BaseController {
 		return response.status(200).json({ message: "reseller has been deleted" });
 	}
 
+	@Get('valid/:id/:token')
+	public async valid(request: Request, response: Response) {
+
+		const self = this;
+		const id: ObjectId = new ObjectId(request.params.id);
+		const token_1: string = request.params.token;
+
+		const connection: Connection = await self.getConnection();
+		const entityManager: EntityManager = self.getManager();
+		let session: Session | undefined = await entityManager.findOne(Session, { _id: id });
+
+		if (!session?.compare(token_1, session.token)) {
+			connection.close();
+			return response.status(200).send(false);
+		}
+
+		connection.close();
+		return response.status(200).send(true);
+	}
+
 }

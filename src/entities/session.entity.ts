@@ -28,4 +28,11 @@ export class Session {
 	})
 	updated_at: Date;
 
+	public compare(token_1: string, token_2: string) {
+		if (token_1 == token_2) {
+			return true;
+		}
+
+		return false;
+	}
 }
