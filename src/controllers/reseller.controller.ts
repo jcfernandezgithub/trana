@@ -148,6 +148,24 @@ export class ResellerController extends BaseController {
 		});
 	}
 
+	@Get('show/:id')
+	public async showById(request: Request, response: Response) {
+		const self = this;
+		const id: ObjectId = new ObjectId(request.params.id);
+
+		const connection: Connection = await self.getConnection();
+		const entityManager: EntityManager = self.getManager();
+		let reseller: Reseller | undefined = await entityManager.findOne(Reseller, { _id: id });
+
+		if (!reseller) {
+			connection.close();
+			return response.status(400).json({ message: "not_found" });
+		}
+
+		connection.close();
+		return response.status(200).json(reseller);
+	}
+
 	@Patch('update/:id')
 	@Middleware([session])
 	public async update(request: Request, response: Response) {
