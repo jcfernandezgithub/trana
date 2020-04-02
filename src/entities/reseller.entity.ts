@@ -11,6 +11,9 @@ export class Reseller extends BaseEntity {
 
 	@Column()
 	public name: string;
+	
+	@Column()
+	public age: number;
 
 	@Column()
 	public last_name: string;
