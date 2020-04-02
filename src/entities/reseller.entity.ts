@@ -11,7 +11,7 @@ export class Reseller extends BaseEntity {
 
 	@Column()
 	public name: string;
-	
+
 	@Column()
 	public age: number;
 
@@ -33,6 +33,12 @@ export class Reseller extends BaseEntity {
 
 	@Column()
 	password: string;
+
+	@Column()
+	stock: number;
+
+	@Column()
+	phone: string;
 
 	@Column({
 		default: null
