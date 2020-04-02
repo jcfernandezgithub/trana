@@ -1,6 +1,8 @@
+import fs from 'fs';
 import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-import moment, { Moment } from 'moment';
+; import { v4 as uuidv4 } from 'uuid';
+import moment, { Moment } from 'moment'
 import { Response, Request } from "express";
 import { Reset } from '../entities/reset.entity';
 import { Verify } from '../entities/verify.entity';
@@ -11,6 +13,7 @@ import { mailOptions, Mailer } from '../libs/mailer';
 import { Reseller } from "../entities/reseller.entity";
 import { session } from '../middlewares/session.middleware';
 import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/core";
+import multer from '../libs/multer';
 
 @Controller('api/reseller')
 export class ResellerController extends BaseController {
@@ -195,7 +198,6 @@ export class ResellerController extends BaseController {
 		const email = request.params.email;
 		const connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
-
 		const reseller = await entityManager.findOneOrFail(Reseller, { email: email });
 
 		if (!reseller) {
@@ -210,7 +212,6 @@ export class ResellerController extends BaseController {
 		await entityManager.delete(Reset, { email: email });
 
 		let reset: Reset = new Reset();
-
 		const token: string = await reset.createToken();
 
 		reset.email = reseller.email;
@@ -273,10 +274,8 @@ export class ResellerController extends BaseController {
 	public async password(request: Request, response: Response) {
 		const self = this;
 		const { email, token, password } = request.body;
-
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
-
 		const reset: Reset | undefined = await entityManager.findOne(Reset, { email: email });
 
 		if (reset === undefined) {
@@ -313,11 +312,8 @@ export class ResellerController extends BaseController {
 
 
 		const filter = { email: email };
-
 		const reseller = new Reseller();
-
 		const update = { password: await reseller.encrypt(password) };
-
 		const doc = await entityManager.update(Reseller, filter, update);
 
 		if (doc) {
@@ -334,8 +330,23 @@ export class ResellerController extends BaseController {
 		return response.json(res);
 	}
 
-	@Post('upload')
+	@Post('upload/:id')
+	@Middleware(multer.single('photo'))
 	public async upload(request: Request, response: Response) {
+		console.log(request.file);
+
+		const self = this;
+		const id: ObjectId = new ObjectId(request.params.id);
+
+		const connection: Connection = await self.getConnection();
+		const entityManager: EntityManager = self.getManager();
+		const updated = await entityManager.update(Reseller, { _id: id }, { photo: request.file.path });
+
+		if (!updated) {
+			connection.close();
+			return response.status(200).json({ message: "upload_failed" });
+		}
+		connection.close();
 		return response.status(200).json({ message: "Image has been uploaded" });
 	}
 
