@@ -391,7 +391,7 @@ export class ResellerController extends BaseController {
 
 		if (!session?.compare(token_1, session.token)) {
 			connection.close();
-			return response.status(200).send(false);
+			return response.status(400).send(false);
 		}
 
 		connection.close();
