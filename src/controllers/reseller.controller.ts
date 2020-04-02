@@ -40,6 +40,7 @@ export class ResellerController extends BaseController {
 
 			const expire: Date = new Date(moment().add(1, "week").format());
 			let session = new Session();
+			session.resellerId = reseller._id;
 			session.token = jwt.sign({ email: reseller.email, expire: expire }, 'personal_access_token');
 			session.email = reseller.email;
 			session.expired_at = expire;

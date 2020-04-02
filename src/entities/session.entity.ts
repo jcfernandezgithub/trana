@@ -1,4 +1,4 @@
-import { ObjectID } from "mongodb";
+import { ObjectID, ObjectId } from "mongodb";
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn } from "typeorm";
 
 @Entity()
@@ -9,6 +9,9 @@ export class Session {
 
 	@Column()
 	token: string;
+
+	@Column()
+	resellerId: ObjectId;
 
 	@Column()
 	email: string;
