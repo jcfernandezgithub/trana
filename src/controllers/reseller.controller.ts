@@ -223,7 +223,7 @@ export class ResellerController extends BaseController {
 			return response.status(400).json(res);
 		}
 
-		await entityManager.delete(Reset, { _id: id });
+		await entityManager.delete(Reset, { email: reseller.email });
 
 		let reset: Reset = new Reset();
 		const token: string = await reset.createToken();
