@@ -66,8 +66,23 @@ export class ResellerController extends BaseController {
 		return response.status(200).json(savedSession);
 	}
 
-	@Get('signout')
+	@Get('signout/:id')
 	public async signout(request: Request, response: Response) {
+
+		const self = this;
+		const id: ObjectId = new ObjectId(request.params.id);
+
+		const connection: Connection = await self.getConnection();
+		const entityManager: EntityManager = self.getManager();
+
+		const deleted = await entityManager.delete(Session, { _id: id });
+
+		if (!deleted) {
+			connection.close();
+			return response.status(400).json({ message: "fail" });
+		}
+
+		connection.close();
 		return response.status(200).json({ message: "signed out" });
 	}
 
@@ -334,7 +349,7 @@ export class ResellerController extends BaseController {
 	@Post('upload/:id')
 	@Middleware(multer.single('photo'))
 	public async upload(request: Request, response: Response) {
-		
+
 		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 
