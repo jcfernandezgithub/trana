@@ -157,6 +157,7 @@ export class ResellerController extends BaseController {
 
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
+
 		let reseller: Reseller | undefined = await entityManager.findOne(Reseller, { _id: id });
 
 		if (!reseller) {
@@ -333,8 +334,7 @@ export class ResellerController extends BaseController {
 	@Post('upload/:id')
 	@Middleware(multer.single('photo'))
 	public async upload(request: Request, response: Response) {
-		console.log(request.file);
-
+		
 		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 
@@ -344,7 +344,7 @@ export class ResellerController extends BaseController {
 
 		if (!updated) {
 			connection.close();
-			return response.status(200).json({ message: "upload_failed" });
+			return response.status(400).json({ message: "upload_failed" });
 		}
 		connection.close();
 		return response.status(200).json({ message: "Image has been uploaded" });
