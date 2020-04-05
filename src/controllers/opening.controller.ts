@@ -8,7 +8,7 @@ import { ObjectId } from "mongodb";
 @Controller('api/opening')
 export class OpeningController extends BaseController {
 	@Get('show')
-	public async show(request: Request, response: Response) {
+	public async show(response: Response) {
 		const self = this;
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
@@ -17,10 +17,27 @@ export class OpeningController extends BaseController {
 
 		if (!openings) {
 			connection.close();
-			return response.status(400).json({ message: 'not_openings_found'});
+			return response.status(400).json({ message: 'not_openings_found' });
 		}
 		connection.close();
 		return response.status(200).json(openings);
+	}
+
+	@Get('show/:id')
+	public async showById(request: Request, response: Response) {
+		const self = this;
+		const id: ObjectId = new ObjectId(request.params.id);
+		const connection: Connection = await self.getConnection();
+		const entityManager: EntityManager = self.getManager();
+
+		let opening: Opening | undefined = await entityManager.findOne(Opening, { _id: id });
+
+		if (!opening) {
+			connection.close();
+			return response.status(400).json({ message: 'not_openings_found' });
+		}
+		connection.close();
+		return response.status(200).json(opening);
 	}
 
 	@Post('create')

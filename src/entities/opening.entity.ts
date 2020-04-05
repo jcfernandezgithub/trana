@@ -1,9 +1,10 @@
 import { Entity, BaseEntity, ObjectIdColumn, Column, CreateDateColumn, UpdateDateColumn, ObjectID } from "typeorm";
+import { ObjectId } from "mongodb";
 
 @Entity()
 export class Opening extends BaseEntity {
 	@ObjectIdColumn()
-	_id: string;
+	_id: ObjectId;
 
 	@Column()
 	name: string;
