@@ -8,6 +8,9 @@ export class Opening extends BaseEntity {
 	@Column()
 	name: string;
 
+	@Column()
+	close: Date;
+
 	@CreateDateColumn({
 		type: "timestamp",
 		default: () => "CURRENT_TIMESTAMP(6)"
