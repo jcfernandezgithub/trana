@@ -16,14 +16,14 @@ import { Controller, Post, Middleware, Delete, Get } from "@overnightjs/core";
 @Controller('api/ticket')
 export class TicketController extends BaseController {
 
-	@Get('show/:email')
+	@Get('show/:id')
 	public async show(request: Request, response: Response) {
 		const self = this;
-		const email = request.params.email;
+		const id = request.params.id;
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
 
-		let tickets: Ticket[] = await entityManager.find(Ticket, { createdBy: email });
+		let tickets: Ticket[] = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: "DESC" } });
 
 		if (!tickets) {
 			connection.close();
