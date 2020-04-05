@@ -38,7 +38,8 @@ export default class App extends Server {
 			router.authController,
 			router.adminController,
 			router.ticketController,
-			router.testController
+			router.testController,
+			router.openingController
 		]);
 	}
 

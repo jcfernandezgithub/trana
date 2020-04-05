@@ -17,7 +17,7 @@ export class OpeningController extends BaseController {
 
 		if (!openings) {
 			connection.close();
-			return response.status(200).json({ message: 'not_openings_found'});
+			return response.status(400).json({ message: 'not_openings_found'});
 		}
 		connection.close();
 		return response.status(200).json(openings);
