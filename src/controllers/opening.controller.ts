@@ -13,7 +13,7 @@ export class OpeningController extends BaseController {
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
 
-		let openings: Opening[] = await entityManager.find(Opening);
+		let openings: Opening[] = await entityManager.find(Opening, { order: { createdAt: 'DESC' } });
 
 		if (!openings) {
 			connection.close();
