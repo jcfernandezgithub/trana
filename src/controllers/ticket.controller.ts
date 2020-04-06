@@ -30,7 +30,7 @@ export class TicketController extends BaseController {
 		let obj: { [k: string]: any } = {};
 
 		openings.forEach(opening => {
-			obj[opening.name.toLocaleLowerCase()] = [];
+			obj[opening.name] = [];
 		});
 
 		tickets.forEach(ticket => {
