@@ -63,9 +63,9 @@ export default class App extends Server {
 
 				const connection: Connection = await getConnection();
 				const entityManager: EntityManager = getManager();
-				let results: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: message.id }, order: { createdAt: 'DESC' } });
+				let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: message.id }, order: { createdAt: 'DESC' } });
 				connection.close();
-				io.to(socket.id).emit('callback', results);
+				io.to(socket.id).emit('callback', tickets);
 			});
 
 		});
