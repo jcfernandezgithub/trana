@@ -52,7 +52,10 @@ export class TicketController extends BaseController {
 	@Middleware([session])
 	public async create(request: Request, response: Response) {
 		const self = this;
-		const { email, opening, reseller } = request.body;
+		const email: string = request.body.email;
+		const opening: string = request.body.opening;
+		const reseller: string = request.body.reseller;
+
 		const expire = new Date(moment().add(2, 'weeks').format());
 		let code = new QRCode().generate(email, expire);
 
@@ -62,7 +65,7 @@ export class TicketController extends BaseController {
 		ticket.owner = email;
 		ticket.used = false;
 		ticket.createdBy = reseller;
-		ticket.opening = opening;
+		ticket.opening = opening.toLowerCase();
 		ticket.expire = expire;
 
 		let fileLocation = './uploads/' + ticket.owner;

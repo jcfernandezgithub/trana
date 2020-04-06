@@ -48,7 +48,7 @@ export class OpeningController extends BaseController {
 		const close: Date = request.body.close;
 		let opening: Opening = new Opening();
 
-		opening.name = name;
+		opening.name = name.toLocaleLowerCase();
 		opening.close = close;
 
 		const connection: Connection = await self.getConnection();
