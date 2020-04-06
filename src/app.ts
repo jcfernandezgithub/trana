@@ -5,10 +5,12 @@ import path from "path";
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import express from 'express';
-import SocketIO from 'socket.io';
 import hbs from "express-handlebars";
 import { Server } from "@overnightjs/core";
 import { Router } from "./router/router.class";
+import SocketIO from 'socket.io';
+import { Connection, EntityManager, getConnection, getManager } from "typeorm";
+import { Ticket } from './entities/ticket.entity';
 
 export default class App extends Server {
 	private close: http.Server;
@@ -57,11 +59,15 @@ export default class App extends Server {
 			console.log('New socket has been connected');
 
 
-			socket.on('ticket_delete', (message) => {
-				io.emit('callback', { message: "hola" })
+			socket.on('ticket_delete', async (message) => {
+
+				let connection: Connection = getConnection();
+				let entityManager: EntityManager = getManager();
+				let results: Ticket[] = await entityManager.find(Ticket, { where: { _id: message.id }, order: { createdAt: 'DESC' } });
+				connection.close();
+				io.to(socket.id).emit('callback', results);
 			});
 
 		});
 	}
-
 }
