@@ -12,6 +12,7 @@ import { Connection, EntityManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { session } from "../middlewares/session.middleware";
 import { Controller, Post, Middleware, Delete, Get } from "@overnightjs/core";
+import { Opening } from '../entities/opening.entity';
 
 @Controller('api/ticket')
 export class TicketController extends BaseController {
@@ -23,7 +24,20 @@ export class TicketController extends BaseController {
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
 
-		let tickets: Ticket[] = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: "DESC" } });
+		let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: "DESC" } });
+		let openings: Opening[] | undefined = await entityManager.find(Opening);
+
+		let obj: { [k: string]: any } = {};
+
+		openings.forEach(opening => {
+			obj[opening.name] = [];
+		});
+
+		tickets.forEach(ticket => {
+			if (openings?.find(opening => opening.name == ticket.opening)) {
+				obj[ticket.opening].push(ticket);
+			}
+		});
 
 		if (!tickets) {
 			connection.close();
@@ -31,7 +45,7 @@ export class TicketController extends BaseController {
 		}
 
 		connection.close();
-		return response.status(200).json(tickets);
+		return response.status(200).json(obj);
 	}
 
 	@Post('create')
