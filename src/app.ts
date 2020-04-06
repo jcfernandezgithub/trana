@@ -60,8 +60,8 @@ export default class App extends Server {
 
 
 			socket.on('ticket_delete', async (message) => {
-
-				const connection: Connection = await getConnection();
+				console.log(message);
+				const connection: Connection = getConnection();
 				const entityManager: EntityManager = getManager();
 				let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: message.id }, order: { createdAt: 'DESC' } });
 				connection.close();
