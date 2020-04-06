@@ -24,7 +24,7 @@ export class TicketController extends BaseController {
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
 
-		let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: "DESC" } });
+		let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: id }, order: { opening: 'DESC'} });
 		/* let openings: Opening[] | undefined = await entityManager.find(Opening);
 
 		let obj: { [k: string]: any } = {};
