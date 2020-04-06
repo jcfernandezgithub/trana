@@ -25,7 +25,7 @@ export class TicketController extends BaseController {
 		const entityManager: EntityManager = self.getManager();
 
 		let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: "DESC" } });
-		let openings: Opening[] | undefined = await entityManager.find(Opening);
+		/* let openings: Opening[] | undefined = await entityManager.find(Opening);
 
 		let obj: { [k: string]: any } = {};
 
@@ -37,7 +37,7 @@ export class TicketController extends BaseController {
 			if (openings?.find(opening => opening.name == ticket.opening)) {
 				obj[ticket.opening].push(ticket);
 			}
-		});
+		}); */
 
 		if (!tickets) {
 			connection.close();
@@ -45,7 +45,7 @@ export class TicketController extends BaseController {
 		}
 
 		connection.close();
-		return response.status(200).json(obj);
+		return response.status(200).json(tickets);
 	}
 
 	@Post('create')
