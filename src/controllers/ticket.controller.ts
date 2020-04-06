@@ -12,7 +12,6 @@ import { Connection, EntityManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { session } from "../middlewares/session.middleware";
 import { Controller, Post, Middleware, Delete, Get } from "@overnightjs/core";
-import { Opening } from '../entities/opening.entity';
 
 @Controller('api/ticket')
 export class TicketController extends BaseController {

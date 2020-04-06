@@ -56,18 +56,7 @@ export default class App extends Server {
 		const io = SocketIO(this.close);
 
 		io.on('connection', (socket: SocketIO.Socket) => {
-			console.log('New socket has been connected');
-
-
-			socket.on('ticket_delete', async (message) => {
-				console.log(message);
-				const connection: Connection = getConnection();
-				const entityManager: EntityManager = getManager();
-				let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: message.id }, order: { createdAt: 'DESC' } });
-				connection.close();
-				io.to(socket.id).emit('callback', tickets);
-			});
-
+			console.log('New socket has been connected: ', socket.id);
 		});
 	}
 }
