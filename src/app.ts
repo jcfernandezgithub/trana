@@ -58,7 +58,7 @@ export default class App extends Server {
 
 
 			socket.on('ticket_delete', (message) => {
-				socket.broadcast.to(socket.id).emit('callback', { message: "hola" })
+				io.emit('callback', { message: "hola" })
 			});
 
 		});
