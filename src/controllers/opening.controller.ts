@@ -8,7 +8,7 @@ import { ObjectId } from "mongodb";
 @Controller('api/opening')
 export class OpeningController extends BaseController {
 	@Get('show')
-	public async show(response: Response) {
+	public async show(request: Request, response: Response) {
 		const self = this;
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
