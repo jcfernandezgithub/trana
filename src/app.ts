@@ -25,6 +25,7 @@ export default class App extends Server {
 		this.app.set('view engine', 'hbs');
 		this.app.set('views', path.join(__dirname, 'views'));
 		this.app.use('/uploads', express.static('./uploads'));
+		this.app.use('/public', express.static('./dist/templates'));
 		this.app.use(cors());
 		this.app.use(express.json())
 		this.app.use(bodyParser.urlencoded({ extended: true }));
