@@ -61,8 +61,8 @@ export default class App extends Server {
 
 			socket.on('ticket_delete', async (message) => {
 
-				let connection: Connection = getConnection();
-				let entityManager: EntityManager = getManager();
+				const connection: Connection = await getConnection();
+				const entityManager: EntityManager = getManager();
 				let results: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: message.id }, order: { createdAt: 'DESC' } });
 				connection.close();
 				io.to(socket.id).emit('callback', results);
