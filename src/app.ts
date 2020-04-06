@@ -56,9 +56,11 @@ export default class App extends Server {
 		io.on('connection', (socket: SocketIO.Socket) => {
 			console.log('New socket has been connected');
 
+
 			socket.on('ticket_delete', (message) => {
-				console.log(message.id);
-			})
+				console.log(message);
+			});
+
 		});
 	}
 
