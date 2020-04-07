@@ -9,8 +9,6 @@ import hbs from "express-handlebars";
 import { Server } from "@overnightjs/core";
 import { Router } from "./router/router.class";
 import SocketIO from 'socket.io';
-import { Connection, EntityManager, getConnection, getManager } from "typeorm";
-import { Ticket } from './entities/ticket.entity';
 
 export default class App extends Server {
 	private close: http.Server;

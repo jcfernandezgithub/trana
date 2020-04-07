@@ -8,8 +8,11 @@ export class Ticket extends BaseEntity {
 	_id: ObjectId;
 
 	@Column()
-	code: string;
+	gid: string;
 
+	@Column()
+	valid: boolean;
+	
 	@Column()
 	owner: string;
 
@@ -18,11 +21,6 @@ export class Ticket extends BaseEntity {
 
 	@Column()
 	opening: string;
-
-	@Column({
-		default: false
-	})
-	used: boolean;
 
 	@Column()
 	fullPath: string;
