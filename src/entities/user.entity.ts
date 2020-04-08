@@ -46,7 +46,7 @@ export class User extends BaseEntity {
 	@Column({
 		default: null
 	})
-	sessionId: ObjectID;
+	session_id: ObjectID;
 
 	@CreateDateColumn({
 		type: "timestamp",

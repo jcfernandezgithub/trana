@@ -11,7 +11,7 @@ export class Session {
 	token: string;
 
 	@Column()
-	resellerId: ObjectId;
+	user_id: ObjectId;
 
 	@Column()
 	email: string;

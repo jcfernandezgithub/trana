@@ -13,7 +13,6 @@ import { User } from "../entities/user.entity";
 import { session } from '../middlewares/session.middleware';
 import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/core";
 
-
 @Controller('api/user')
 export class UserController extends BaseController {
 
@@ -37,17 +36,17 @@ export class UserController extends BaseController {
 			return response.status(400).json({ "message": 'wrong_password' });
 		}
 
-		if (user.sessionId) {
-			await entityManager.delete(Session, { id: user.sessionId });
+		if (user.session_id) {
+			await entityManager.delete(Session, { id: user.session_id });
 
 			const expire: Date = new Date(moment().add(1, "week").format());
 			let session = new Session();
-			session.resellerId = user._id;
+			session.user_id = user._id;
 			session.token = jwt.sign({ email: user.email, expire: expire }, 'personal_access_token');
 			session.email = user.email;
 			session.expired_at = expire;
 			const savedSession = await entityManager.save(Session, session);
-			user.sessionId = savedSession._id;
+			user.session_id = savedSession._id;
 			await entityManager.save(User, user);
 
 			await connection.close();
@@ -60,7 +59,7 @@ export class UserController extends BaseController {
 		session.email = user.email;
 		session.expired_at = expire;
 		const savedSession = await entityManager.save(Session, session);
-		user.sessionId = savedSession._id;
+		user.session_id = savedSession._id;
 		await entityManager.save(User, user);
 
 		await connection.close();
@@ -105,6 +104,7 @@ export class UserController extends BaseController {
 		user.name = request.body.name;
 		user.last_name = request.body.last_name;
 		user.email = request.body.email;
+		user.role = request.body.role;
 		user.password = await user.encrypt(request.body.password);
 
 		const saved: User = await entityManager.save(User, user);
