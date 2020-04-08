@@ -27,7 +27,7 @@ export class UserController extends BaseController {
 
 		if (user === undefined) {
 			connection.close();
-			return response.status(400).json({ "message": 'reseller_not_found' });
+			return response.status(400).json({ "message": 'user_not_found' });
 		}
 		const compare = await user.compare(request.body.password, user.password);
 
@@ -37,7 +37,7 @@ export class UserController extends BaseController {
 		}
 
 		if (user.session_id) {
-			await entityManager.delete(Session, { id: user.session_id });
+			await entityManager.delete(Session, { _id: user.session_id });
 
 			const expire: Date = new Date(moment().add(1, "week").format());
 			let session = new Session();
