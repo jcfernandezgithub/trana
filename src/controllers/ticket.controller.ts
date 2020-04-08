@@ -40,7 +40,6 @@ export class TicketController extends BaseController {
 	}
 
 	@Post('create')
-	/* @Middleware([session]) */
 	public async create(request: Request, response: Response) {
 		const self = this;
 		const connection: Connection = await self.getConnection();
@@ -167,7 +166,7 @@ export class TicketController extends BaseController {
 	}
 
 	@Get('read/:token')
-	async read(request: Request, response: Response) {
+	public async read(request: Request, response: Response) {
 		const self = this;
 		const qr = new QRCode();
 		let token = qr.read(request.params.token) as Payload;

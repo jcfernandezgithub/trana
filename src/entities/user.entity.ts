@@ -4,7 +4,7 @@ import { BaseEntity } from "./base.entity";
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn } from "typeorm";
 
 @Entity()
-export class Reseller extends BaseEntity {
+export class User extends BaseEntity {
 
 	@ObjectIdColumn()
 	public _id: ObjectID;

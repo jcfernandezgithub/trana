@@ -35,7 +35,7 @@ export default class App extends Server {
 		let router = new Router();
 
 		super.addControllers([
-			router.resellerController,
+			router.userController,
 			router.authController,
 			router.adminController,
 			router.ticketController,
