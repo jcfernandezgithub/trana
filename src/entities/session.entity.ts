@@ -14,6 +14,9 @@ export class Session {
 	user_id: ObjectId;
 
 	@Column()
+	role: string;
+
+	@Column()
 	email: string;
 
 	@Column()

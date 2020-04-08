@@ -44,6 +44,7 @@ export class UserController extends BaseController {
 			session.user_id = user._id;
 			session.token = jwt.sign({ email: user.email, expire: expire }, 'personal_access_token');
 			session.email = user.email;
+			session.role = user.role;
 			session.expired_at = expire;
 			const savedSession = await entityManager.save(Session, session);
 			user.session_id = savedSession._id;
