@@ -186,7 +186,7 @@ export class UserController extends BaseController {
 	@Middleware([session])
 	public async update(request: Request, response: Response) {
 		const self = this;
-		const filter = { email: request.params.email };
+		const filter = { id: request.params.id };
 		let reseller: User = request.body;
 		const connection: Connection = await self.getConnection();
 		const entityManager: EntityManager = self.getManager();
