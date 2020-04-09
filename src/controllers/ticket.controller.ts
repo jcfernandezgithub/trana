@@ -210,7 +210,7 @@ export class TicketController extends BaseController {
 		let token = qr.read(request.params.token) as Payload;
 
 		if (!token) {
-			return response.status(400).json({ message: 'Firma no valida, verificar fuente de la entrada.' });
+			return response.status(400).json({ message: 'Firma no valida, verificar origen de la entrada.' });
 		}
 
 		const connection: Connection = await self.getConnection();
