@@ -184,7 +184,7 @@ export class TicketController extends BaseController {
 
 		if (!ticket.valid) {
 			connection.close();
-			return response.status(400).json({ message: 'La entrada ya ha sido usada' });
+			return response.status(400).json({ message: 'La entrada ya ha sido usada', ticket: ticket});
 		}
 
 		const now = moment();
