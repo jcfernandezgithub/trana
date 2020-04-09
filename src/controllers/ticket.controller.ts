@@ -204,4 +204,24 @@ export class TicketController extends BaseController {
 		return response.status(200).json({ message: "Ingreso exitoso!" });
 	}
 
+	@Get('get/:token')
+	public async get(request: Request, response: Response) {
+		const self = this;
+		const qr = new QRCode();
+		let token = qr.read(request.params.token) as Payload;
+
+		const connection: Connection = await self.getConnection();
+		const entityManager = self.getManager();
+
+		const id: ObjectId = new ObjectId(token.id);
+		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
+
+		if (!ticket) {
+			connection.close();
+			return response.status(400).json({ message: 'No se encontro entrada' });
+		}
+
+		connection.close();
+		return response.status(200).json(ticket);
+	}
 }
