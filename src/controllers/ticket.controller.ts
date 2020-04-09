@@ -206,6 +206,7 @@ export class TicketController extends BaseController {
 	public async get(request: Request, response: Response) {
 		const self = this;
 		const qr = new QRCode();
+
 		let token = qr.read(request.params.token) as Payload;
 
 		if (!token) {
