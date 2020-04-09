@@ -8,6 +8,11 @@ export class QRCode {
 	}
 
 	read(token: string) {
-		return jwt.verify(token, process.env.key || 'qr_code_key');
+		let results = jwt.verify(token, process.env.key || 'qr_code_key');
+
+		if (results) {
+			return results;
+		}
+		return false;
 	}
 }
