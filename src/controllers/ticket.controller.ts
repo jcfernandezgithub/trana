@@ -208,6 +208,10 @@ export class TicketController extends BaseController {
 		const qr = new QRCode();
 		let token = qr.read(request.params.token) as Payload;
 
+		if (!token) {
+			return response.status(400).json({ message: 'No se encontro entrada' });
+		}
+
 		const connection: Connection = await self.getConnection();
 		const entityManager = self.getManager();
 
