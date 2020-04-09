@@ -165,16 +165,14 @@ export class TicketController extends BaseController {
 		return response.status(200).json({ message: "ticket has been sent" });
 	}
 
-	@Get('read/:token')
+	@Get('read/:id')
 	public async read(request: Request, response: Response) {
 		const self = this;
-		const qr = new QRCode();
-		let token = qr.read(request.params.token) as Payload;
+		const id: ObjectId = new ObjectId(request.params.id);
 
 		const connection: Connection = await self.getConnection();
 		const entityManager = self.getManager();
 
-		const id: ObjectId = new ObjectId(token.id);
 		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
 
 		if (!ticket) {
