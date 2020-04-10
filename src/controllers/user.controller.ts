@@ -76,7 +76,7 @@ export class UserController extends BaseController {
 
 		let res = {
 			success: true,
-			message: "User has been creted, please confirm your email address"
+			message: "El usuario ha sido creado"
 		}
 		connection.close();
 		return response.status(200).json(res);

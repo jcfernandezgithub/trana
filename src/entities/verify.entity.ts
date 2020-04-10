@@ -1,14 +1,14 @@
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
-import { ObjectID } from "mongodb";
+import { ObjectId } from "mongodb";
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn } from "typeorm";
 
 @Entity()
 export class Verify {
 	@ObjectIdColumn()
-	_id: ObjectID
+	_id: ObjectId
 
-	@Column()
+	@Column({ unique: true })
 	email: string;
 
 	@Column()
@@ -33,10 +33,10 @@ export class Verify {
 	}
 
 	public compare(token_1: string, token_2: string) {
-		if (token_1 === token_2 ) {
+		if (token_1 === token_2) {
 			return true;
 		}
-	
+
 		return false;
 	}
 }
