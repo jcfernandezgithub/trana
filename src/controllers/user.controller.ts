@@ -114,7 +114,8 @@ export class UserController extends BaseController {
 
 	@Patch('update/:id')
 	public async update(request: Request, response: Response) {
-		const filter = { _id: request.params.id };
+		const id: ObjectId = new ObjectId(request.params.id);
+		const filter = { _id: id };
 		let user: User = request.body;
 		const entityManager: EntityManager = getManager();
 
