@@ -115,11 +115,11 @@ export class UserController extends BaseController {
 	@Patch('update/:id')
 	@Middleware([session])
 	public async update(request: Request, response: Response) {
-		const filter = { id: request.params.id };
-		let reseller: User = request.body;
+		const filter = { _id: request.params.id };
+		let user: User = request.body;
 		const entityManager: EntityManager = getManager();
 
-		let saved = await entityManager.update(User, filter, reseller);
+		let saved = await entityManager.update(User, filter, user);
 
 		if (!saved) {
 			let res = {
