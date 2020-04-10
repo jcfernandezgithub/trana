@@ -113,7 +113,6 @@ export class UserController extends BaseController {
 	}
 
 	@Patch('update/:id')
-	@Middleware([session])
 	public async update(request: Request, response: Response) {
 		const filter = { _id: request.params.id };
 		let user: User = request.body;
