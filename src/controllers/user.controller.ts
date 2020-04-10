@@ -81,7 +81,7 @@ export class UserController extends BaseController {
 	@Get('show')
 	public async show(request: Request, response: Response) {
 		const entityManager: EntityManager = getManager();
-		const users: User[] = await entityManager.find(User);
+		const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }, { role: 'reader' }] } });
 		return response.status(200).json(users);
 	}
 
