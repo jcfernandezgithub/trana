@@ -70,7 +70,7 @@ export class UserController extends BaseController {
 				success: false,
 				message: "Error to send email"
 			}
-
+			connection.close();
 			return response.status(400).json(res);
 		}
 
@@ -331,6 +331,7 @@ export class UserController extends BaseController {
 				success: false,
 				message: "Token doesn't match"
 			}
+			connection.close();
 			return response.status(400).json(res);
 		}
 
@@ -343,11 +344,12 @@ export class UserController extends BaseController {
 				success: false,
 				message: "User not found"
 			}
+			connection.close();
 			return response.status(400).json(res);
 		}
 
 		let res = {
-			message: "User has been verified, thanks"
+			message: "El usuario ha sido verificado"
 		}
 
 		connection.close();
