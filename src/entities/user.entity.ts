@@ -27,6 +27,9 @@ export class User extends BaseEntity {
 	public status: boolean;
 
 	@Column()
+	public verified: boolean;
+
+	@Column()
 	public role: string;
 
 	@Column({

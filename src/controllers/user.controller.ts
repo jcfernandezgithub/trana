@@ -33,7 +33,9 @@ export class UserController extends BaseController {
 		user.name = request.body.name;
 		user.last_name = request.body.last_name;
 		user.email = request.body.email;
+		user.status = request.body.status;
 		user.role = request.body.role;
+		user.verified = false;
 		user.password = await user.encrypt(request.body.password);
 
 		const saved: User = await entityManager.save(User, user);
@@ -90,6 +92,25 @@ export class UserController extends BaseController {
 		return response.status(200).json({
 			resellers: resellers
 		});
+	}
+
+	@Get('role/:role')
+	public async showByRole(request: Request, response: Response) {
+		const self = this;
+		const connection: Connection = await self.getConnection();
+		const entityManager: EntityManager = self.getManager();
+
+		let filter = { role: request.params.role };
+
+		let users: User[] | undefined = await entityManager.find(User, { where: filter });
+
+		if (!users) {
+			connection.close();
+			return response.status(400).json({ message: 'No se encontraron usuarios' });
+		}
+
+		connection.close();
+		return response.status(200).json(users);
 	}
 
 	@Get('show/:id')
@@ -312,7 +333,7 @@ export class UserController extends BaseController {
 		}
 
 		const filter = { email: email };
-		const user = await entityManager.update(User, filter, { status: true })
+		const user = await entityManager.update(User, filter, { verified: true })
 		await entityManager.delete(Verify, { email: email });
 
 		if (!user) {
