@@ -8,7 +8,7 @@ import { QRCode } from "../libs/qr.code";
 import { Response, Request, request } from "express";
 import { Ticket } from "../entities/ticket.entity";
 import { BaseController } from "./base.controller";
-import { Connection, EntityManager } from "typeorm";
+import { Connection, EntityManager, getManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { Opening } from '../entities/opening.entity';
 import { Controller, Post, Middleware, Delete, Get } from "@overnightjs/core";
@@ -25,25 +25,20 @@ export class TicketController extends BaseController {
 	public async show(request: Request, response: Response) {
 		const self = this;
 		const id = request.params.id;
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 
 		let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: 'DESC' } });
 
 		if (!tickets) {
-			connection.close();
 			return response.status(400).json({ message: 'not_found' });
 		}
-
-		connection.close();
 		return response.status(200).json(tickets);
 	}
 
 	@Post('create')
 	public async create(request: Request, response: Response) {
 		const self = this;
-		const connection: Connection = await self.getConnection();
-		const entityManager = self.getManager();
+		const entityManager = getManager();
 
 		const email: string = request.body.email;
 		const gid: string = request.body.gid;
@@ -53,7 +48,6 @@ export class TicketController extends BaseController {
 		const opening: Opening | undefined = await entityManager.findOne(Opening, { where: { _id: openingId } });
 
 		if (!opening) {
-			connection.close();
 			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
 		}
 
@@ -79,7 +73,6 @@ export class TicketController extends BaseController {
 		let token = new QRCode().generate(saved._id);
 
 		if (!saved) {
-			connection.close();
 			return response.status(400).json({ message: "error_saving" });
 		}
 
@@ -101,11 +94,8 @@ export class TicketController extends BaseController {
 		const sent = await mailer.sendMail(options);
 
 		if (!sent) {
-			connection.close();
 			return response.status(401).json({ message: "could_not_send_email" });
 		}
-
-		connection.close();
 		return response.status(200).json({ message: "ticket has been created" });
 	}
 
@@ -113,17 +103,13 @@ export class TicketController extends BaseController {
 	public async delete(request: Request, response: Response) {
 		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 
 		const deleted = await entityManager.delete(Ticket, { _id: id });
 
 		if (!deleted) {
-			connection.close();
 			return response.status(200).json({ message: "deletion_failed" });
 		}
-
-		connection.close();
 		return response.status(200).json({ message: "ticket has been deleted" });
 	}
 
@@ -131,13 +117,11 @@ export class TicketController extends BaseController {
 	public async resend(request: Request, response: Response) {
 		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 
 		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
 
 		if (!ticket) {
-			connection.close();
 			return response.status(400).json({ message: "not_found" });
 		}
 
@@ -157,11 +141,8 @@ export class TicketController extends BaseController {
 		const sent = await mailer.sendMail(options);
 
 		if (!sent) {
-			connection.close();
 			return response.status(401).json({ message: "could_not_send_email" });
 		}
-
-		connection.close();
 		return response.status(200).json({ message: "ticket has been sent" });
 	}
 
@@ -170,35 +151,28 @@ export class TicketController extends BaseController {
 		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 
-		const connection: Connection = await self.getConnection();
-		const entityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 
 		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
 
 		if (!ticket) {
-			connection.close();
 			return response.status(400).json({ message: 'No se encontro entrada' });
 		}
 
 		if (!ticket.valid) {
-			connection.close();
 			return response.status(400).json({ message: 'La entrada ya ha sido usada', ticket: ticket});
 		}
 
 		const now = moment();
 		if (now.isSameOrAfter(ticket.expire)) {
-			connection.close();
 			return response.status(400).json({ message: 'Esta entrada ya no es valida' });
 		}
 
 		let updated = await entityManager.update(Ticket, { _id: ticket._id }, { valid: false });
 
 		if (!updated) {
-			connection.close();
 			return response.status(400).json({ message: 'Problemas al leer vuelva a intentar' });
 		}
-
-		connection.close();
 		return response.status(200).json({ message: "Ingreso exitoso!" });
 	}
 
@@ -212,19 +186,14 @@ export class TicketController extends BaseController {
 		if (!token) {
 			return response.status(400).json({ message: 'Firma no valida, verificar origen de la entrada.' });
 		}
-
-		const connection: Connection = await self.getConnection();
-		const entityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 
 		const id: ObjectId = new ObjectId(token.id);
 		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
 
 		if (!ticket) {
-			connection.close();
 			return response.status(400).json({ message: 'No se encontro entrada' });
 		}
-
-		connection.close();
 		return response.status(200).json(ticket);
 	}
 }

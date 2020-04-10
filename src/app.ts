@@ -9,6 +9,7 @@ import hbs from "express-handlebars";
 import { Server } from "@overnightjs/core";
 import { Router } from "./router/router.class";
 import SocketIO from 'socket.io';
+import { createConnection, createConnections } from 'typeorm';
 
 export default class App extends Server {
 	private close: http.Server;
@@ -29,6 +30,12 @@ export default class App extends Server {
 		this.app.use(bodyParser.urlencoded({ extended: true }));
 		this.app.use(morgan('dev'));
 		this.setupControllers();
+
+		createConnection().then(connection => {
+			console.log(connection.name);
+		}).catch(error => {
+			console.log(error);
+		});
 	}
 
 	private setupControllers() {

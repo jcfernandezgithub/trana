@@ -5,7 +5,7 @@ import { Response, Request } from "express";
 import { Reset } from '../entities/reset.entity';
 import { Verify } from '../entities/verify.entity';
 import { BaseController } from "./base.controller";
-import { EntityManager, Connection } from "typeorm";
+import { EntityManager, Connection, getManager } from "typeorm";
 import { Session } from "../entities/session.entity";
 import { mailOptions, Mailer } from '../libs/mailer';
 import { User } from "../entities/user.entity";
@@ -19,12 +19,10 @@ export class UserController extends BaseController {
 	public async create(request: Request, response: Response) {
 
 		const self = this;
-		const connection = await self.getConnection();
-		let entityManager: EntityManager = self.getManager();
+		let entityManager: EntityManager = getManager();
 		let u: User | undefined = await entityManager.findOne(User, { email: request.body.email });
 
 		if (u) {
-			connection.close();
 			return response.status(400).json({ "message": "duplicated" });
 		}
 
@@ -70,7 +68,6 @@ export class UserController extends BaseController {
 				success: false,
 				message: "Error to send email"
 			}
-			connection.close();
 			return response.status(400).json(res);
 		}
 
@@ -78,70 +75,49 @@ export class UserController extends BaseController {
 			success: true,
 			message: "El usuario ha sido creado"
 		}
-		connection.close();
 		return response.status(200).json(res);
 	}
 
 	@Get('show')
 	public async show(request: Request, response: Response) {
-		const self = this;
-
-		const connection = await self.getConnection();
-
-		const repo = connection.getMongoRepository(User);
-		let resellers: User[] = await repo.find();
-
-		return response.status(200).json({
-			resellers: resellers
-		});
+		const entityManager: EntityManager = getManager();
+		const users: User[] = await entityManager.find(User);
+		return response.status(200).json(users);
 	}
 
 	@Get('role/:role')
 	public async showByRole(request: Request, response: Response) {
-		const self = this;
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
-
+		const entityManager: EntityManager = getManager();
 		let filter = { role: request.params.role };
-
 		let users: User[] | undefined = await entityManager.find(User, { where: filter });
 
 		if (!users) {
-			connection.close();
 			return response.status(400).json({ message: 'No se encontraron usuarios' });
 		}
 
-		connection.close();
 		return response.status(200).json(users);
 	}
 
 	@Get('show/:id')
 	public async showById(request: Request, response: Response) {
-		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
-
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 
 		let user: User | undefined = await entityManager.findOne(User, { _id: id });
 
 		if (!user) {
-			connection.close();
 			return response.status(400).json({ message: "not_found" });
 		}
 
-		connection.close();
 		return response.status(200).json(user);
 	}
 
 	@Patch('update/:id')
 	@Middleware([session])
 	public async update(request: Request, response: Response) {
-		const self = this;
 		const filter = { id: request.params.id };
 		let reseller: User = request.body;
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 
 		let saved = await entityManager.update(User, filter, reseller);
 
@@ -149,19 +125,16 @@ export class UserController extends BaseController {
 			let res = {
 				"message": "error_updating, try again"
 			}
-			connection.close()
 			return response.status(400).json(res);
 		}
-		connection.close();
 		return response.status(200).json({ "message": "updated" });
 	}
 
 	@Get('forgot/:id')
 	public async forgot(request: Request, response: Response) {
-		const self = this;
+
 		const id: ObjectId = new ObjectId(request.params.id);
-		const connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 		const user: User | undefined = await entityManager.findOne(User, { _id: id });
 
 		if (!user) {
@@ -169,7 +142,6 @@ export class UserController extends BaseController {
 				success: false,
 				message: "Reseller not found"
 			}
-			connection.close();
 			return response.status(400).json(res);
 		}
 
@@ -189,7 +161,6 @@ export class UserController extends BaseController {
 				success: false,
 				message: "We could't process your request, try again"
 			}
-			connection.close();
 			return response.status(400).json(result);
 		}
 
@@ -214,7 +185,6 @@ export class UserController extends BaseController {
 				success: false,
 				message: "We couldn't process your request, try again"
 			}
-			connection.close();
 			return response.status(400).json(res);
 		}
 
@@ -222,7 +192,6 @@ export class UserController extends BaseController {
 			success: true,
 			message: "Email was sent, please check your mail box"
 		}
-		connection.close();
 		return response.status(200).json(res);
 	}
 
@@ -240,8 +209,7 @@ export class UserController extends BaseController {
 		const id: ObjectId = new ObjectId(request.body.id);
 		const token = request.body.token;
 		const password = request.body.password;
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 		const reset: Reset | undefined = await entityManager.findOne(Reset, { _id: id });
 
 		if (reset === undefined) {
@@ -249,7 +217,6 @@ export class UserController extends BaseController {
 				success: false,
 				message: "reset_request_not_found"
 			}
-			connection.close();
 			return response.status(400).json(res);
 		}
 
@@ -261,7 +228,6 @@ export class UserController extends BaseController {
 				success: false,
 				message: "Token has been expired, please create new one"
 			}
-			connection.close();
 			return response.status(400).json(res);
 		}
 
@@ -272,10 +238,8 @@ export class UserController extends BaseController {
 				success: true,
 				message: "Token doesn't match, please create new one"
 			}
-			connection.close();
 			return response.status(400).json(res);
 		}
-
 
 		const filter = { _id: id };
 		const reseller = new User();
@@ -291,8 +255,6 @@ export class UserController extends BaseController {
 			message: "Password has been reset",
 			reseller: doc
 		}
-
-		connection.close();
 		return response.json(res);
 	}
 
@@ -303,15 +265,12 @@ export class UserController extends BaseController {
 		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 		const updated = await entityManager.update(User, { _id: id }, { photo: request.file.path });
 
 		if (!updated) {
-			connection.close();
 			return response.status(400).json({ message: "upload_failed" });
 		}
-		connection.close();
 		return response.status(200).json({ message: "Image has been uploaded" });
 	}
 
@@ -321,8 +280,7 @@ export class UserController extends BaseController {
 		const self = this;
 		const email = request.params.email;
 		const token = request.params.token;
-		const connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 		const verify: Verify = await entityManager.findOneOrFail(Verify, { email: email });
 		const verified = verify.compare(verify.token, decodeURIComponent(token));
 
@@ -331,7 +289,6 @@ export class UserController extends BaseController {
 				success: false,
 				message: "Token doesn't match"
 			}
-			connection.close();
 			return response.status(400).json(res);
 		}
 
@@ -344,7 +301,6 @@ export class UserController extends BaseController {
 				success: false,
 				message: "User not found"
 			}
-			connection.close();
 			return response.status(400).json(res);
 		}
 
@@ -352,7 +308,6 @@ export class UserController extends BaseController {
 			message: "El usuario ha sido verificado"
 		}
 
-		connection.close();
 		return response.status(200).json(res);
 	}
 
@@ -361,17 +316,14 @@ export class UserController extends BaseController {
 		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 
 		const deleted = await entityManager.delete(User, { _id: id });
 
 		if (!deleted) {
-			connection.close();
 			return response.status(400).json({ message: "deletion failed" });
 		}
 
-		connection.close();
 		return response.status(200).json({ message: "reseller has been deleted" });
 	}
 
@@ -382,16 +334,12 @@ export class UserController extends BaseController {
 		const id: ObjectId = new ObjectId(request.params.id);
 		const token_1: string = request.params.token;
 
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 		let session: Session | undefined = await entityManager.findOne(Session, { _id: id });
 
 		if (!session?.compare(token_1, session.token)) {
-			connection.close();
 			return response.status(400).send(false);
 		}
-
-		connection.close();
 		return response.status(200).send(true);
 	}
 

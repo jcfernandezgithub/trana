@@ -1,5 +1,4 @@
 {
-	"name":"default",
 	"type": "mongodb",
 	"url": "mongodb+srv://admin:08nov1991@cluster0-5nltt.mongodb.net/monroe?retryWrites=true&w=majority",
 	"useNewUrlParser": true,

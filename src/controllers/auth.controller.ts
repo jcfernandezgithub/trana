@@ -1,7 +1,6 @@
 import { Response, Request } from "express";
-import { Verify } from '../entities/verify.entity';
 import { BaseController } from "./base.controller";
-import { EntityManager, Connection } from "typeorm";
+import { EntityManager, getManager } from "typeorm";
 import { User } from "../entities/user.entity";
 import { Controller, Get, Post } from "@overnightjs/core";
 import { Session } from "../entities/session.entity";
@@ -14,21 +13,16 @@ import { ObjectId } from "mongodb";
 export class AuthController extends BaseController {
 	@Post('signin')
 	public async signin(request: Request, response: Response) {
-
-		const self = this;
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
-
+		
+		const entityManager: EntityManager = getManager();
 		const user: User | undefined = await entityManager.findOne(User, { email: request.body.email });
 
 		if (user === undefined) {
-			connection.close();
 			return response.status(400).json({ "message": 'user_not_found' });
 		}
 		const compare = await user.compare(request.body.password, user.password);
 
 		if (!compare) {
-			connection.close();
 			return response.status(400).json({ "message": 'wrong_password' });
 		}
 
@@ -46,7 +40,6 @@ export class AuthController extends BaseController {
 			user.session_id = savedSession._id;
 			await entityManager.save(User, user);
 
-			await connection.close();
 			return response.status(200).json(savedSession);
 		}
 
@@ -59,27 +52,20 @@ export class AuthController extends BaseController {
 		user.session_id = savedSession._id;
 		await entityManager.save(User, user);
 
-		await connection.close();
 		return response.status(200).json(savedSession);
 	}
 
 	@Get('signout/:id')
 	public async signout(request: Request, response: Response) {
-
-		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
-
-		const connection: Connection = await self.getConnection();
-		const entityManager: EntityManager = self.getManager();
+		const entityManager: EntityManager = getManager();
 
 		const deleted = await entityManager.delete(Session, { _id: id });
 
 		if (!deleted) {
-			connection.close();
 			return response.status(400).json({ message: "fail" });
 		}
 
-		connection.close();
 		return response.status(200).json({ message: "signed out" });
 	}
 }
