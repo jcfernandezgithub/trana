@@ -115,10 +115,9 @@ export class TicketController extends BaseController {
 
 	@Get('resend/:id')
 	public async resend(request: Request, response: Response) {
-		const self = this;
+
 		const id: ObjectId = new ObjectId(request.params.id);
 		const entityManager: EntityManager = getManager();
-
 		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
 
 		if (!ticket) {
@@ -148,11 +147,9 @@ export class TicketController extends BaseController {
 
 	@Get('read/:id')
 	public async read(request: Request, response: Response) {
-		const self = this;
+
 		const id: ObjectId = new ObjectId(request.params.id);
-
 		const entityManager: EntityManager = getManager();
-
 		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
 
 		if (!ticket) {
@@ -160,7 +157,7 @@ export class TicketController extends BaseController {
 		}
 
 		if (!ticket.valid) {
-			return response.status(400).json({ message: 'La entrada ya ha sido usada', ticket: ticket});
+			return response.status(400).json({ message: 'La entrada ya ha sido usada', ticket: ticket });
 		}
 
 		const now = moment();
@@ -178,9 +175,7 @@ export class TicketController extends BaseController {
 
 	@Get('get/:token')
 	public async get(request: Request, response: Response) {
-		const self = this;
 		const qr = new QRCode();
-
 		let token = qr.read(request.params.token) as Payload;
 
 		if (!token) {
@@ -195,5 +190,14 @@ export class TicketController extends BaseController {
 			return response.status(400).json({ message: 'No se encontro entrada' });
 		}
 		return response.status(200).json(ticket);
+	}
+
+	@Get('list/:userId')
+	public async view(request: Request, response: Response) {
+		const entityManager: EntityManager = getManager();
+		const id = request.params.userId;
+
+		let tickets = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: 'DESC' } });
+		return response.status(200).json(tickets);
 	}
 }

@@ -2,14 +2,14 @@ import { ObjectId } from 'mongodb';
 import multer from '../libs/multer';
 import moment, { Moment } from 'moment'
 import { Response, Request } from "express";
+import { User } from "../entities/user.entity";
 import { Reset } from '../entities/reset.entity';
 import { Verify } from '../entities/verify.entity';
 import { BaseController } from "./base.controller";
-import { EntityManager, Connection, getManager } from "typeorm";
+import { EntityManager, getManager } from "typeorm";
 import { Session } from "../entities/session.entity";
 import { mailOptions, Mailer } from '../libs/mailer';
-import { User } from "../entities/user.entity";
-import { session } from '../middlewares/session.middleware';
+
 import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/core";
 
 @Controller('api/user')
@@ -81,7 +81,7 @@ export class UserController extends BaseController {
 	@Get('show')
 	public async show(request: Request, response: Response) {
 		const entityManager: EntityManager = getManager();
-		const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }, { role: 'reader' }] }, order: {role: 'ASC'} });
+		const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }, { role: 'reader' }] }, order: { role: 'ASC' } });
 		return response.status(200).json(users);
 	}
 
@@ -117,8 +117,8 @@ export class UserController extends BaseController {
 		const id: ObjectId = new ObjectId(request.params.id);
 		const filter = { _id: id };
 		let user: User = request.body;
-		const entityManager: EntityManager = getManager();
 
+		const entityManager: EntityManager = getManager();
 		let saved = await entityManager.update(User, filter, user);
 
 		if (!saved) {
