@@ -130,12 +130,12 @@ export class UserController extends BaseController {
 		return response.status(200).json({ "message": "Actualizado" });
 	}
 
-	@Get('forgot/:id')
+	@Get('forgot/:email')
 	public async forgot(request: Request, response: Response) {
 
-		const id: ObjectId = new ObjectId(request.params.id);
+		const email: string = request.params.email;
 		const entityManager: EntityManager = getManager();
-		const user: User | undefined = await entityManager.findOne(User, { _id: id });
+		const user: User | undefined = await entityManager.findOne(User, { email: email });
 
 		if (!user) {
 			let res = {
@@ -164,7 +164,7 @@ export class UserController extends BaseController {
 			return response.status(400).json(result);
 		}
 
-		const url = `${request.protocol}://${request.get('host')}/api/reseller/reset/${id}/${encodeURIComponent(token.toString())}`;
+		const url = `${request.protocol}://${request.get('host')}/api/reseller/reset/${saved._id}/${encodeURIComponent(token.toString())}`;
 
 		let options: mailOptions = {
 			from: '"NodeJS" <jcfernandez@jcdeveloper.net>',
@@ -180,7 +180,6 @@ export class UserController extends BaseController {
 		const sent = mailer.sendMail(options);
 
 		if (!sent) {
-			console.log(id);
 			let res = {
 				success: false,
 				message: "No se pudo procesar su peticion, intente otra vez"
