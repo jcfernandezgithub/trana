@@ -47,9 +47,13 @@ export class TicketController extends BaseController {
 		const resellerId: string = request.body.reseller;
 
 		const opening: Opening | undefined = await entityManager.findOne(Opening, { where: { _id: openingId } });
-		let reseller: User | undefined = await entityManager.findOne(User, { where: { _id: id } });
+		let reseller: User = await entityManager.findOneOrFail(User, { where: { _id: id } });
 
-		if (reseller?.available(reseller.stock)) {
+		if (!reseller) {
+			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
+		}
+
+		if (reseller.available(reseller.stock)) {
 			return response.status(400).json({ message: "No te queda stock" });
 		}
 
@@ -82,7 +86,8 @@ export class TicketController extends BaseController {
 			return response.status(400).json({ message: "Error al guardar" });
 		}
 
-		let user_updated = await entityManager.decrement(User, { _id: id }, "stock", 1);
+		let stock = reseller.stock - 1;
+		let user_updated = await entityManager.update(User, { _id: id }, { stock: stock });
 
 		if (!user_updated) {
 			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
