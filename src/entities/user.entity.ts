@@ -73,4 +73,8 @@ export class User extends BaseEntity {
 		return await bcrypt.compare(password, resellerPassword);
 	}
 
+	public available(stock: number): boolean {
+		return stock <= 0;
+	}
+
 }

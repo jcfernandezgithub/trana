@@ -12,6 +12,8 @@ import { EntityManager, getManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { Opening } from '../entities/opening.entity';
 import { Controller, Post, Delete, Get } from "@overnightjs/core";
+import { User } from '../entities/user.entity';
+import { Schema } from 'mongoose';
 
 interface Payload {
 	id: string;
@@ -35,17 +37,21 @@ export class TicketController extends BaseController {
 		return response.status(200).json(tickets);
 	}
 
-	@Post('create')
+	@Post('create/:id')
 	public async create(request: Request, response: Response) {
-		const self = this;
 		const entityManager = getManager();
-
+		const id: ObjectId = new ObjectId(request.params.id);
 		const email: string = request.body.email;
 		const gid: string = request.body.gid;
 		const openingId: ObjectId = new ObjectId(request.body.opening);
 		const resellerId: string = request.body.reseller;
 
 		const opening: Opening | undefined = await entityManager.findOne(Opening, { where: { _id: openingId } });
+		let reseller: User | undefined = await entityManager.findOne(User, { where: { _id: id } });
+
+		if (reseller?.available(reseller.stock)) {
+			return response.status(400).json({ message: "No te queda stock" });
+		}
 
 		if (!opening) {
 			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
@@ -74,6 +80,12 @@ export class TicketController extends BaseController {
 
 		if (!saved) {
 			return response.status(400).json({ message: "Error al guardar" });
+		}
+
+		let user_updated = await entityManager.decrement(User, { _id: id }, "stock", 1);
+
+		if(!user_updated) {
+			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
 		}
 
 		await QRGenerator.toFile(fileLocation + '/' + fileName, token, { errorCorrectionLevel: 'low' });
