@@ -117,18 +117,33 @@ export class TicketController extends BaseController {
 		return response.status(200).json({ message: "La entrada ha sido creada" });
 	}
 
-	@Delete('delete/:id')
+	@Delete('delete/:id/:user_id')
 	public async delete(request: Request, response: Response) {
-		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
+		const user_id: ObjectId = new ObjectId(request.params.user_id);
 		const entityManager: EntityManager = getManager();
 
+		let user: User = await entityManager.findOneOrFail(User, { _id: user_id });
+
+		if (!user) {
+			return response.status(200).json({ message: "Error al elimiar" });
+		}
+
 		const deleted = await entityManager.delete(Ticket, { _id: id });
+		
+		let stock = user.stock + 1;
+
+		let updated = await entityManager.update(User, { _id: user_id }, { stock: stock });
+
+		if(!updated) {
+			return response.status(200).json({ message: "Error al elimiar" });
+		}
 
 		if (!deleted) {
 			return response.status(200).json({ message: "Error al elimiar" });
 		}
-		return response.status(200).json({ message: "La entrada ha sido creada" });
+		
+		return response.status(200).json({ message: "La entrada ha sido eliminada" });
 	}
 
 	@Get('resend/:id')
