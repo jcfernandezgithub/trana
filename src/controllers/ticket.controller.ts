@@ -8,10 +8,10 @@ import { QRCode } from "../libs/qr.code";
 import { Response, Request, request } from "express";
 import { Ticket } from "../entities/ticket.entity";
 import { BaseController } from "./base.controller";
-import { Connection, EntityManager, getManager } from "typeorm";
+import { EntityManager, getManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { Opening } from '../entities/opening.entity';
-import { Controller, Post, Middleware, Delete, Get } from "@overnightjs/core";
+import { Controller, Post, Delete, Get } from "@overnightjs/core";
 
 interface Payload {
 	id: string;
@@ -198,6 +198,14 @@ export class TicketController extends BaseController {
 		const id = request.params.userId;
 
 		let tickets = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: 'DESC' } });
+		return response.status(200).json(tickets);
+	}
+
+	@Get('opening/:openingName')
+	public async byOpening(request: Request, response: Response) {
+		const name = request.params.openingName;
+		const entityManager: EntityManager = getManager();
+		let tickets = await entityManager.find(Ticket, { where: { opening: name } });
 		return response.status(200).json(tickets);
 	}
 }
