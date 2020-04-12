@@ -204,7 +204,6 @@ export class UserController extends BaseController {
 
 	@Post('password')
 	public async password(request: Request, response: Response) {
-		const self = this;
 		const id: ObjectId = new ObjectId(request.body.id);
 		const token = request.body.token;
 		const password = request.body.password;
