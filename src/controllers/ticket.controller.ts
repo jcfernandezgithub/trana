@@ -8,7 +8,7 @@ import { QRCode } from "../libs/qr.code";
 import { Response, Request, request } from "express";
 import { Ticket } from "../entities/ticket.entity";
 import { BaseController } from "./base.controller";
-import { EntityManager, getManager } from "typeorm";
+import { EntityManager, getManager, getRepository } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { Opening } from '../entities/opening.entity';
 import { Controller, Post, Delete, Get } from "@overnightjs/core";
@@ -82,9 +82,9 @@ export class TicketController extends BaseController {
 			return response.status(400).json({ message: "Error al guardar" });
 		}
 
-		let user_updated = await entityManager.decrement(User, { _id: id }, "stock", "1");
+		let user_updated = await getRepository(User).decrement({ _id: id }, "stock", 1);
 
-		if(!user_updated) {
+		if (!user_updated) {
 			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
 		}
 
