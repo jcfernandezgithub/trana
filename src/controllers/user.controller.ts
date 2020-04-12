@@ -245,9 +245,11 @@ export class UserController extends BaseController {
 		const update = { password: new_password };
 		const doc = await entityManager.update(User, filter, update);
 
-		if (doc) {
-			await entityManager.delete(Reset, { _id: id });
+		if (!doc) {
+			return response.status(400).json({ message: 'error' });
 		}
+
+		await entityManager.delete(Reset, { _id: id });
 
 		let res = {
 			success: true,
