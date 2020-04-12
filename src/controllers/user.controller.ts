@@ -241,8 +241,9 @@ export class UserController extends BaseController {
 		}
 
 		const filter = { _id: id };
-		const reseller = new User();
-		const update = { password: await reseller.encrypt(password) };
+		const user = new User();
+		const new_password: string = user.encrypt(password);
+		const update = { password: new_password };
 		const doc = await entityManager.update(User, filter, update);
 
 		if (doc) {
@@ -252,7 +253,6 @@ export class UserController extends BaseController {
 		let res = {
 			success: true,
 			message: "La contraseña ha sido cambiada",
-			reseller: doc
 		}
 		return response.json(res);
 	}

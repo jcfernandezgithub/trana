@@ -64,9 +64,9 @@ export class User extends BaseEntity {
 	public updatedAt: Date;
 
 
-	public async encrypt(password: string): Promise<string> {
-		const salt = await bcrypt.genSalt(10);
-		return bcrypt.hash(password, salt);
+	public encrypt(password: string): string {
+		const salt = bcrypt.genSaltSync(10);
+		return bcrypt.hashSync(password, salt);
 	}
 
 	public async compare(password: string, resellerPassword: string): Promise<boolean> {
