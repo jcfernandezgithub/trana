@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
 import moment, { Moment } from "moment";
-import { ObjectID } from "mongodb";
+import { ObjectID, ObjectId } from "mongodb";
 import { Entity, ObjectIdColumn, Column, CreateDateColumn, UpdateDateColumn } from "typeorm";
 
 interface IReset {
@@ -20,7 +20,7 @@ interface IReset {
 export class Reset implements IReset {
 
 	@ObjectIdColumn()
-	_id: ObjectID;
+	_id: ObjectId;
 
 	@Column()
 	email: string;
