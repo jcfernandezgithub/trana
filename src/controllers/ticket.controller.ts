@@ -45,8 +45,10 @@ export class TicketController extends BaseController {
 		const openingId: ObjectId = new ObjectId(request.body.opening);
 		const resellerId: string = request.body.reseller;
 
+		const id: ObjectId = new ObjectId(resellerId);
+
 		const opening: Opening | undefined = await entityManager.findOne(Opening, { where: { _id: openingId } });
-		let reseller: User = await entityManager.findOneOrFail(User, { where: { _id: resellerId } });
+		let reseller: User = await entityManager.findOneOrFail(User, { where: { _id: id } });
 
 		if (!reseller) {
 			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
@@ -86,7 +88,7 @@ export class TicketController extends BaseController {
 		}
 
 		let stock = reseller.stock - 1;
-		let user_updated = await entityManager.update(User, { _id: resellerId }, { stock: stock });
+		let user_updated = await entityManager.update(User, { _id: id }, { stock: stock });
 
 		if (!user_updated) {
 			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
