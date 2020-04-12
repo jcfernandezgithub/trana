@@ -23,7 +23,7 @@ export class UserController extends BaseController {
 		let u: User | undefined = await entityManager.findOne(User, { email: request.body.email });
 
 		if (u) {
-			return response.status(400).json({ "message": "duplicated" });
+			return response.status(400).json({ "message": "El usuario ya existe" });
 		}
 
 		let user: User = new User();
@@ -66,7 +66,7 @@ export class UserController extends BaseController {
 		if (!sent) {
 			let res = {
 				success: false,
-				message: "Error to send email"
+				message: "Erroral enviar correo electrónico"
 			}
 			return response.status(400).json(res);
 		}
@@ -106,7 +106,7 @@ export class UserController extends BaseController {
 		let user: User | undefined = await entityManager.findOne(User, { _id: id });
 
 		if (!user) {
-			return response.status(400).json({ message: "not_found" });
+			return response.status(400).json({ message: "Usuario no existe" });
 		}
 
 		return response.status(200).json(user);
@@ -123,11 +123,11 @@ export class UserController extends BaseController {
 
 		if (!saved) {
 			let res = {
-				"message": "error_updating, try again"
+				"message": "Error alactualizar, intente otra vez"
 			}
 			return response.status(400).json(res);
 		}
-		return response.status(200).json({ "message": "updated" });
+		return response.status(200).json({ "message": "Actualizado" });
 	}
 
 	@Get('forgot/:id')
@@ -140,7 +140,7 @@ export class UserController extends BaseController {
 		if (!user) {
 			let res = {
 				success: false,
-				message: "Reseller not found"
+				message: "Usuario no encontrado"
 			}
 			return response.status(400).json(res);
 		}
@@ -159,7 +159,7 @@ export class UserController extends BaseController {
 		if (!saved) {
 			let result = {
 				success: false,
-				message: "We could't process your request, try again"
+				message: "No se pudo procesar su peticion, intente otra vez"
 			}
 			return response.status(400).json(result);
 		}
@@ -183,14 +183,14 @@ export class UserController extends BaseController {
 			console.log(id);
 			let res = {
 				success: false,
-				message: "We couldn't process your request, try again"
+				message: "No se pudo procesar su peticion, intente otra vez"
 			}
 			return response.status(400).json(res);
 		}
 
 		let res = {
 			success: true,
-			message: "Email was sent, please check your mail box"
+			message: "El correo fue enviado, verifique su bandeja de entrada"
 		}
 		return response.status(200).json(res);
 	}
@@ -226,7 +226,7 @@ export class UserController extends BaseController {
 		if (expired) {
 			let res = {
 				success: false,
-				message: "Token has been expired, please create new one"
+				message: "El token ha expirado, envie uno nuevo"
 			}
 			return response.status(400).json(res);
 		}
@@ -236,7 +236,7 @@ export class UserController extends BaseController {
 		if (!compare) {
 			let res = {
 				success: true,
-				message: "Token doesn't match, please create new one"
+				message: "El token no coincide, cree uno nuevo"
 			}
 			return response.status(400).json(res);
 		}
@@ -252,7 +252,7 @@ export class UserController extends BaseController {
 
 		let res = {
 			success: true,
-			message: "Password has been reset",
+			message: "La contraseña ha sido cambiada",
 			reseller: doc
 		}
 		return response.json(res);
@@ -262,16 +262,15 @@ export class UserController extends BaseController {
 	@Middleware(multer.single('photo'))
 	public async upload(request: Request, response: Response) {
 
-		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 
 		const entityManager: EntityManager = getManager();
 		const updated = await entityManager.update(User, { _id: id }, { photo: request.file.path });
 
 		if (!updated) {
-			return response.status(400).json({ message: "upload_failed" });
+			return response.status(400).json({ message: "Error al guardar" });
 		}
-		return response.status(200).json({ message: "Image has been uploaded" });
+		return response.status(200).json({ message: "La imagen ha sido guardada" });
 	}
 
 	@Get('confirm/:email/:token')
@@ -287,7 +286,7 @@ export class UserController extends BaseController {
 		if (!verified) {
 			let res = {
 				success: false,
-				message: "Token doesn't match"
+				message: "Token no coincide"
 			}
 			return response.status(400).json(res);
 		}
@@ -299,7 +298,7 @@ export class UserController extends BaseController {
 		if (!user) {
 			let res = {
 				success: false,
-				message: "User not found"
+				message: "No existe usuario"
 			}
 			return response.status(400).json(res);
 		}
@@ -321,10 +320,10 @@ export class UserController extends BaseController {
 		const deleted = await entityManager.delete(User, { _id: id });
 
 		if (!deleted) {
-			return response.status(400).json({ message: "deletion failed" });
+			return response.status(400).json({ message: "Error al eliminar" });
 		}
 
-		return response.status(200).json({ message: "reseller has been deleted" });
+		return response.status(200).json({ message: "Usuario ha sido eliminado" });
 	}
 
 	@Get('valid/:id/:token')
