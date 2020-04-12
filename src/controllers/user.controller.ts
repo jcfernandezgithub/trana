@@ -135,7 +135,7 @@ export class UserController extends BaseController {
 
 		const email: string = request.params.email;
 		const entityManager: EntityManager = getManager();
-		const user: User | undefined = await entityManager.findOne(User, { email: email });
+		const user: User = await entityManager.findOneOrFail(User, { email: email });
 
 		if (!user) {
 			let res = {
@@ -145,7 +145,7 @@ export class UserController extends BaseController {
 			return response.status(400).json(res);
 		}
 
-		await entityManager.delete(Reset, { email: user.email });
+		await entityManager.delete(Reset, { email: email });
 
 		let reset: Reset = new Reset();
 		const token: string = await reset.createToken();
@@ -208,12 +208,13 @@ export class UserController extends BaseController {
 		const token = request.body.token;
 		const password = request.body.password;
 		const entityManager: EntityManager = getManager();
-		const reset: Reset | undefined = await entityManager.findOne(Reset, { _id: id });
 
-		if (reset === undefined) {
+		const reset: Reset = await entityManager.findOneOrFail(Reset, { _id: id });
+
+		if (!reset) {
 			let res = {
 				success: false,
-				message: "reset_request_not_found"
+				message: "No se encontro una petición de cambio de contraseña"
 			}
 			return response.status(400).json(res);
 		}
@@ -239,7 +240,7 @@ export class UserController extends BaseController {
 			return response.status(400).json(res);
 		}
 
-		const filter = { _id: id };
+		const filter = { email: reset.email };
 		const user = new User();
 		const new_password: string = user.encrypt(password);
 		const update = { password: new_password };
