@@ -14,7 +14,7 @@ export class OpeningController extends BaseController {
 		let openings: Opening[] = await entityManager.find(Opening, { order: { createdAt: 'DESC' } });
 
 		if (!openings) {
-			return response.status(400).json({ message: 'not_openings_found' });
+			return response.status(400).json({ message: 'No se encontro apertura' });
 		}
 		return response.status(200).json(openings);
 	}
@@ -28,7 +28,7 @@ export class OpeningController extends BaseController {
 		let opening: Opening | undefined = await entityManager.findOne(Opening, { _id: id });
 
 		if (!opening) {
-			return response.status(400).json({ message: 'not_openings_found' });
+			return response.status(400).json({ message: 'No se encontro apertura' });
 		}
 		return response.status(200).json(opening);
 	}
@@ -47,22 +47,21 @@ export class OpeningController extends BaseController {
 		const saved: Opening = await entityManager.save(Opening, opening);
 
 		if (!saved) {
-			return response.status(400).json({ message: 'error_saving' });
+			return response.status(400).json({ message: 'Error al guardar' });
 		}
-		return response.status(200).json({ message: 'saved' });
+		return response.status(200).json({ message: 'Guardado' });
 	}
 
 	@Delete('delete/:id')
 	public async delete(request: Request, response: Response) {
-		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 		const entityManager: EntityManager = getManager();
 
 		const deleted = await entityManager.delete(Opening, { _id: id });
 
 		if (!deleted) {
-			return response.status(200).json({ message: "deletion_failed" });
+			return response.status(200).json({ message: "Error al eliminar" });
 		}
-		return response.status(200).json({ message: "opening has been deleted" });
+		return response.status(200).json({ message: "Apertura ha sido eliminada" });
 	}
 }

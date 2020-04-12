@@ -30,7 +30,7 @@ export class TicketController extends BaseController {
 		let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: 'DESC' } });
 
 		if (!tickets) {
-			return response.status(400).json({ message: 'not_found' });
+			return response.status(400).json({ message: 'No existe entrada' });
 		}
 		return response.status(200).json(tickets);
 	}
@@ -73,7 +73,7 @@ export class TicketController extends BaseController {
 		let token = new QRCode().generate(saved._id);
 
 		if (!saved) {
-			return response.status(400).json({ message: "error_saving" });
+			return response.status(400).json({ message: "Error al guardar" });
 		}
 
 		await QRGenerator.toFile(fileLocation + '/' + fileName, token, { errorCorrectionLevel: 'low' });
@@ -94,9 +94,9 @@ export class TicketController extends BaseController {
 		const sent = await mailer.sendMail(options);
 
 		if (!sent) {
-			return response.status(401).json({ message: "could_not_send_email" });
+			return response.status(401).json({ message: "Error al enviar correo electrónico" });
 		}
-		return response.status(200).json({ message: "ticket has been created" });
+		return response.status(200).json({ message: "La entrada ha sido creada" });
 	}
 
 	@Delete('delete/:id')
@@ -108,9 +108,9 @@ export class TicketController extends BaseController {
 		const deleted = await entityManager.delete(Ticket, { _id: id });
 
 		if (!deleted) {
-			return response.status(200).json({ message: "deletion_failed" });
+			return response.status(200).json({ message: "Error al elimiar" });
 		}
-		return response.status(200).json({ message: "ticket has been deleted" });
+		return response.status(200).json({ message: "La entrada ha sido creada" });
 	}
 
 	@Get('resend/:id')
@@ -140,9 +140,9 @@ export class TicketController extends BaseController {
 		const sent = await mailer.sendMail(options);
 
 		if (!sent) {
-			return response.status(401).json({ message: "could_not_send_email" });
+			return response.status(401).json({ message: "Error al enviar correo electrónico" });
 		}
-		return response.status(200).json({ message: "ticket has been sent" });
+		return response.status(200).json({ message: "La entrada ha sido enviada" });
 	}
 
 	@Get('read/:id')
