@@ -164,7 +164,7 @@ export class UserController extends BaseController {
 			return response.status(400).json(result);
 		}
 
-		const url = `${request.protocol}://${request.get('host')}/api/reseller/reset/${saved._id}/${encodeURIComponent(token.toString())}`;
+		const url = `${request.protocol}://${request.get('host')}/api/user/reset/${saved._id}/${encodeURIComponent(token.toString())}`;
 
 		let options: mailOptions = {
 			from: '"NodeJS" <jcfernandez@jcdeveloper.net>',
