@@ -82,7 +82,7 @@ export class TicketController extends BaseController {
 			return response.status(400).json({ message: "Error al guardar" });
 		}
 
-		let user_updated = await entityManager.decrement(User, { _id: id }, "stock", 1);
+		let user_updated = await entityManager.decrement(User, { _id: id }, "stock", "1");
 
 		if(!user_updated) {
 			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
