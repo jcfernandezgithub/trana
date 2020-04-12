@@ -37,17 +37,16 @@ export class TicketController extends BaseController {
 		return response.status(200).json(tickets);
 	}
 
-	@Post('create/:id')
+	@Post('create')
 	public async create(request: Request, response: Response) {
 		const entityManager = getManager();
-		const id: ObjectId = new ObjectId(request.params.id);
 		const email: string = request.body.email;
 		const gid: string = request.body.gid;
 		const openingId: ObjectId = new ObjectId(request.body.opening);
 		const resellerId: string = request.body.reseller;
 
 		const opening: Opening | undefined = await entityManager.findOne(Opening, { where: { _id: openingId } });
-		let reseller: User = await entityManager.findOneOrFail(User, { where: { _id: id } });
+		let reseller: User = await entityManager.findOneOrFail(User, { where: { _id: resellerId } });
 
 		if (!reseller) {
 			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
@@ -87,7 +86,7 @@ export class TicketController extends BaseController {
 		}
 
 		let stock = reseller.stock - 1;
-		let user_updated = await entityManager.update(User, { _id: id }, { stock: stock });
+		let user_updated = await entityManager.update(User, { _id: resellerId }, { stock: stock });
 
 		if (!user_updated) {
 			return response.status(400).json({ message: "Error, vuelva a intentarlo" });
