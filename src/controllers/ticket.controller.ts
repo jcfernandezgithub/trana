@@ -5,15 +5,15 @@ import { ObjectId } from 'mongodb';
 import handlebars from 'handlebars';
 import { v4 as uuidv4 } from 'uuid';
 import { QRCode } from "../libs/qr.code";
-import { Response, Request, request } from "express";
+import { Response, Request } from "express";
+import { User } from '../entities/user.entity';
 import { Ticket } from "../entities/ticket.entity";
 import { BaseController } from "./base.controller";
-import { EntityManager, getManager, getRepository, getMongoRepository } from "typeorm";
+import { EntityManager, getManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { Opening } from '../entities/opening.entity';
-import { Controller, Post, Delete, Get, ClassMiddleware, Middleware } from "@overnightjs/core";
-import { User } from '../entities/user.entity';
 import { session } from '../middlewares/session.middleware';
+import { Controller, Post, Delete, Get, Middleware } from "@overnightjs/core";
 
 interface Payload {
 	id: string;

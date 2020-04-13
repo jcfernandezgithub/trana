@@ -1,13 +1,16 @@
-import { Controller, Get, Post, Delete } from "@overnightjs/core";
+import { Controller, Get, Post, Delete, Middleware } from "@overnightjs/core";
 import { Connection, EntityManager, getManager } from "typeorm";
 import { BaseController } from "./base.controller";
 import { Request, Response } from "express";
 import { Opening } from "../entities/opening.entity";
 import { ObjectId } from "mongodb";
+import { session } from "../middlewares/session.middleware";
 
 @Controller('api/opening')
 export class OpeningController extends BaseController {
+	
 	@Get('show')
+	@Middleware([session])
 	public async show(request: Request, response: Response) {
 		const entityManager: EntityManager = getManager();
 
@@ -20,6 +23,7 @@ export class OpeningController extends BaseController {
 	}
 
 	@Get('show/:id')
+	@Middleware([session])
 	public async showById(request: Request, response: Response) {
 		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
@@ -34,6 +38,7 @@ export class OpeningController extends BaseController {
 	}
 
 	@Post('create')
+	@Middleware([session])
 	public async create(request: Request, response: Response) {
 
 		const name: string = request.body.name;
@@ -53,6 +58,7 @@ export class OpeningController extends BaseController {
 	}
 
 	@Delete('delete/:id')
+	@Middleware([session])
 	public async delete(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
 		const entityManager: EntityManager = getManager();
