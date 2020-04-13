@@ -10,11 +10,13 @@ import { EntityManager, getManager } from "typeorm";
 import { Session } from "../entities/session.entity";
 import { mailOptions, Mailer } from '../libs/mailer';
 import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/core";
+import { session } from '../middlewares/session.middleware';
 
 @Controller('api/user')
 export class UserController extends BaseController {
 
 	@Post('create')
+	@Middleware([session])
 	public async create(request: Request, response: Response) {
 
 		const self = this;
@@ -112,6 +114,7 @@ export class UserController extends BaseController {
 	}
 
 	@Patch('update/:id')
+	@Middleware([session])
 	public async update(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
 		const filter = { _id: id };
@@ -259,7 +262,7 @@ export class UserController extends BaseController {
 	}
 
 	@Post('upload/:id')
-	@Middleware(multer.single('photo'))
+	@Middleware([session, multer.single('photo')])
 	public async upload(request: Request, response: Response) {
 
 		const id: ObjectId = new ObjectId(request.params.id);
@@ -311,8 +314,8 @@ export class UserController extends BaseController {
 	}
 
 	@Delete('delete/:id')
+	@Middleware([session])
 	public async delete(request: Request, response: Response) {
-		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 
 		const entityManager: EntityManager = getManager();
