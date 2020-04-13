@@ -9,7 +9,6 @@ import { BaseController } from "./base.controller";
 import { EntityManager, getManager } from "typeorm";
 import { Session } from "../entities/session.entity";
 import { mailOptions, Mailer } from '../libs/mailer';
-
 import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/core";
 
 @Controller('api/user')

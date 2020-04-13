@@ -2,7 +2,7 @@ import jwt from 'jsonwebtoken';
 import moment, { Moment } from 'moment';
 import { Session } from "../entities/session.entity";
 import { Request, Response, NextFunction } from 'express';
-import { createConnection, getManager, Connection, EntityManager } from "typeorm";
+import { getManager, EntityManager } from "typeorm";
 
 interface IPayload {
 	email: string;
@@ -15,56 +15,52 @@ export const session = async (request: Request, response: Response, next: NextFu
 	const token = request.header('Authorization');
 
 	if (!token) {
-		let res = {
-			message: "empty_authorization_header"
-		};
-		return response.status(401).json(res);
+		let results = {
+			message: "Encabezado de autorización vacío"
+		}
+		return response.status(401).json(results);
 	}
 
 	let payload: IPayload;
 
 	try {
-		payload = jwt.verify(token, process.env.key || 'personal_access_token') as IPayload;
+    payload = jwt.verify(token, process.env.key || 'personal_access_token') as IPayload;
+  }
+  catch {
+    let res = {
+      message: "No autorizado, token invalido"
+    };
+    return response.status(401).json(res);
 	}
-	catch {
-		let res = {
-			message: "token_does_not_match"
-		};
-		return response.status(401).json(res);
-	}
-
-	const connection: Connection = await createConnection();
+	
 	const entityManager: EntityManager = getManager();
 
 	let session: Session | undefined = await entityManager.findOne(Session, { email: payload.email });
 
 	if (session === undefined) {
-		let res = {
-			message: "no_session_found"
-		};
-		connection.close();
-		return response.status(401).json(res);
+    let res = {
+      message: "No se encontro sesión"
+    };
+    return response.status(401).json(res);
 	}
 
 	if (session.token !== token) {
-		let res = {
-			message: "token_does_not_match"
-		};
-		connection.close();
-		return response.status(401).json(res);
+    let res = {
+      message: "No autorizado, token invalido"
+    };
+    return response.status(401).json(res);
 	}
-
+	
 	let now: Moment = moment();
 
-	if (now.isSameOrAfter(payload.expire)) {
-		let res = {
-			message: "session_has_been_expired"
-		};
-		connection.close();
-		return response.status(401).json(res);
-	}
+  if (now.isSameOrAfter(session.expired_at)) {
+    let res = {
+      message: "La sesión ha expirado"
+    };
+    return response.status(401).json(res);
+  }
 
-	connection.close();
-	return next();
+  return next();
+	
 }
 

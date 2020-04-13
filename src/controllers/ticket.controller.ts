@@ -11,9 +11,9 @@ import { BaseController } from "./base.controller";
 import { EntityManager, getManager, getRepository, getMongoRepository } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { Opening } from '../entities/opening.entity';
-import { Controller, Post, Delete, Get } from "@overnightjs/core";
+import { Controller, Post, Delete, Get, ClassMiddleware, Middleware } from "@overnightjs/core";
 import { User } from '../entities/user.entity';
-import { Schema } from 'mongoose';
+import { session } from '../middlewares/session.middleware';
 
 interface Payload {
 	id: string;
@@ -24,6 +24,7 @@ interface Payload {
 export class TicketController extends BaseController {
 
 	@Get('show/:id')
+	@Middleware([session])
 	public async show(request: Request, response: Response) {
 		const self = this;
 		const id = request.params.id;
@@ -38,6 +39,7 @@ export class TicketController extends BaseController {
 	}
 
 	@Post('create')
+	@Middleware([session])
 	public async create(request: Request, response: Response) {
 		const entityManager = getManager();
 		const email: string = request.body.email;
@@ -118,6 +120,7 @@ export class TicketController extends BaseController {
 	}
 
 	@Delete('delete/:id/:user_id')
+	@Middleware([session])
 	public async delete(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
 		const user_id: ObjectId = new ObjectId(request.params.user_id);
@@ -147,6 +150,7 @@ export class TicketController extends BaseController {
 	}
 
 	@Get('resend/:id')
+	@Middleware([session])
 	public async resend(request: Request, response: Response) {
 
 		const id: ObjectId = new ObjectId(request.params.id);
@@ -179,6 +183,7 @@ export class TicketController extends BaseController {
 	}
 
 	@Get('read/:id')
+	@Middleware([session])
 	public async read(request: Request, response: Response) {
 
 		const id: ObjectId = new ObjectId(request.params.id);
@@ -207,6 +212,7 @@ export class TicketController extends BaseController {
 	}
 
 	@Get('get/:token')
+	@Middleware([session])
 	public async get(request: Request, response: Response) {
 		const qr = new QRCode();
 		let token = qr.read(request.params.token) as Payload;
@@ -226,6 +232,7 @@ export class TicketController extends BaseController {
 	}
 
 	@Get('list/:userId')
+	@Middleware([session])
 	public async view(request: Request, response: Response) {
 		const entityManager: EntityManager = getManager();
 		const id = request.params.userId;
@@ -235,6 +242,7 @@ export class TicketController extends BaseController {
 	}
 
 	@Get('opening/:openingName')
+	@Middleware([session])
 	public async byOpening(request: Request, response: Response) {
 		const name = request.params.openingName;
 		const entityManager: EntityManager = getManager();
