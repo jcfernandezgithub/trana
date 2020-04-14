@@ -22,6 +22,9 @@ export class Session {
 	@Column()
 	expired_at: Date;
 
+	@Column()
+	dark: boolean;
+
 	@CreateDateColumn({
 		type: "timestamp",
 		default: () => "CURRENT_TIMESTAMP(6)"

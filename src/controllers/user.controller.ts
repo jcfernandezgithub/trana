@@ -262,7 +262,7 @@ export class UserController extends BaseController {
 	}
 
 	@Post('upload/:id')
-	@Middleware([session, multer.single('photo')])
+	@Middleware([multer.single('photo')])
 	public async upload(request: Request, response: Response) {
 
 		const id: ObjectId = new ObjectId(request.params.id);

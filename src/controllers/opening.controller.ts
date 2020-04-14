@@ -1,5 +1,5 @@
 import { Controller, Get, Post, Delete, Middleware } from "@overnightjs/core";
-import { Connection, EntityManager, getManager } from "typeorm";
+import { EntityManager, getManager } from "typeorm";
 import { BaseController } from "./base.controller";
 import { Request, Response } from "express";
 import { Opening } from "../entities/opening.entity";
@@ -25,7 +25,6 @@ export class OpeningController extends BaseController {
 	@Get('show/:id')
 	@Middleware([session])
 	public async showById(request: Request, response: Response) {
-		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 		const entityManager: EntityManager = getManager();
 
