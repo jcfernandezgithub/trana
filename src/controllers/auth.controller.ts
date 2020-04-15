@@ -27,11 +27,11 @@ export class AuthController extends BaseController {
 		}
 
 		if (!user.verified) {
-			return response.status(400).json({ "message": "Correo electrónico no verificado" });
+			return response.status(400).json({ "message": "Cuenta no verificada" });
 		}
 
 		if (!user.status) {
-			return response.status(400).json({ mesage: "Cuenta inhabilitada" });
+			return response.status(400).json({ "message": "Cuenta inhabilitada" });
 		}
 
 		if (user.session_id) {
