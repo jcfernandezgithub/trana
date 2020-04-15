@@ -3,10 +3,10 @@ import moment, { Moment } from 'moment';
 import { Session } from "../entities/session.entity";
 import { Request, Response, NextFunction } from 'express';
 import { getManager, EntityManager } from "typeorm";
+import { ObjectId } from 'mongodb';
 
 interface IPayload {
-	email: string;
-	expire: Date;
+	id: string;
 	iat: number;
 }
 
@@ -34,8 +34,8 @@ export const session = async (request: Request, response: Response, next: NextFu
 	}
 	
 	const entityManager: EntityManager = getManager();
-
-	let session: Session | undefined = await entityManager.findOne(Session, { email: payload.email });
+	let filter = new ObjectId(payload.id);
+	let session: Session | undefined = await entityManager.findOne(Session, { user_id: filter });
 
 	if (session === undefined) {
     let res = {
