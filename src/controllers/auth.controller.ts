@@ -13,7 +13,7 @@ import { ObjectId } from "mongodb";
 export class AuthController extends BaseController {
 	@Post('signin')
 	public async signin(request: Request, response: Response) {
-		
+
 		const entityManager: EntityManager = getManager();
 		const user: User | undefined = await entityManager.findOne(User, { email: request.body.email });
 
@@ -24,6 +24,14 @@ export class AuthController extends BaseController {
 
 		if (!compare) {
 			return response.status(400).json({ "message": 'wrong_password' });
+		}
+
+		if (!user.verified) {
+			return response.status(400).json({ "message": "Correo electrónico no verificado" });
+		}
+
+		if (!user.status) {
+			return response.status(400).json({ mesage: "Cuenta inhabilitada" });
 		}
 
 		if (user.session_id) {

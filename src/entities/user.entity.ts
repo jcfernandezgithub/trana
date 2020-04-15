@@ -21,9 +21,7 @@ export class User extends BaseEntity {
 	@Column()
 	public photo: string;
 
-	@Column({
-		default: false
-	})
+	@Column()
 	public status: boolean;
 
 	@Column()

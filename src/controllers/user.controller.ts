@@ -80,6 +80,7 @@ export class UserController extends BaseController {
 	}
 
 	@Get('show')
+	@Middleware([session])
 	public async show(request: Request, response: Response) {
 		const entityManager: EntityManager = getManager();
 		const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }, { role: 'reader' }] }, order: { role: 'ASC' } });
@@ -100,6 +101,7 @@ export class UserController extends BaseController {
 	}
 
 	@Get('show/:id')
+	@Middleware([session])
 	public async showById(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
 		const entityManager: EntityManager = getManager();
