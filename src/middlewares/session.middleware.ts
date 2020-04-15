@@ -24,43 +24,43 @@ export const session = async (request: Request, response: Response, next: NextFu
 	let payload: IPayload;
 
 	try {
-    payload = jwt.verify(token, process.env.key || 'personal_access_token') as IPayload;
-  }
-  catch {
-    let res = {
-      message: "No autorizado, token invalido"
-    };
-    return response.status(401).json(res);
+		payload = jwt.verify(token, process.env.key || 'personal_access_token') as IPayload;
 	}
-	
+	catch {
+		let res = {
+			message: "No autorizado, token invalido"
+		};
+		return response.status(401).json(res);
+	}
+
 	const entityManager: EntityManager = getManager();
 	let filter = new ObjectId(payload.id);
 	let session: Session | undefined = await entityManager.findOne(Session, { user_id: filter });
 
 	if (session === undefined) {
-    let res = {
-      message: "No se encontro sesión"
-    };
-    return response.status(401).json(res);
+		let res = {
+			message: "No se encontro sesión"
+		};
+		return response.status(401).json(res);
 	}
 
 	if (session.token !== token) {
-    let res = {
-      message: "No autorizado, token invalido"
-    };
-    return response.status(401).json(res);
+		let res = {
+			message: "No autorizado, token invalido"
+		};
+		return response.status(401).json(res);
 	}
-	
+
 	let now: Moment = moment();
 
-  if (now.isSameOrAfter(session.expired_at)) {
-    let res = {
-      message: "La sesión ha expirado"
-    };
-    return response.status(401).json(res);
-  }
+	if (now.isSameOrAfter(session.expired_at)) {
+		let res = {
+			message: "La sesión ha expirado"
+		};
+		return response.status(401).json(res);
+	}
 
-  return next();
-	
+	return next();
+
 }
 

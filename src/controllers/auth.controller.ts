@@ -84,14 +84,24 @@ export class AuthController extends BaseController {
 	@Get('valid/:token')
 	public async valid(request: Request, response: Response) {
 		const token = request.params.token;
-		let session: Session = new Session();
+		const entityManager = getManager();
 		let payload: Payload;
 
 		try {
 			payload = jwt.verify(token, "personal_access_token") as Payload;
 		} catch {
-			return response.status(200).json({message: "Error en la firma digital"});
+			return response.status(400).json({ message: "Error en la firma digital" });
 		}
-		return response.status(200).json(payload);
+
+		const filter = new ObjectId(payload.id);
+		let session = await entityManager.findOne(Session, { user_id: filter });
+
+		const compare = session?.compare(session.token, token);
+		console.log(session?.token);
+
+		if (!compare) {
+			return response.status(400).json({ message: "Sesion invalida, vuelva a iniciar sesion" });
+		}
+		return response.status(200).json({message: 'Sesion valida'});
 	}
 }
