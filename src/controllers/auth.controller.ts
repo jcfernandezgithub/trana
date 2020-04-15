@@ -67,13 +67,13 @@ export class AuthController extends BaseController {
 	public async signout(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
 		const entityManager: EntityManager = getManager();
+		const session = await entityManager.findOne(Session, { _id: id });
 
-		const deleted = await entityManager.delete(Session, { _id: id });
-
-		if (!deleted) {
-			return response.status(400).json({ message: "fail" });
+		if (!session) {
+			return response.status(400).json({ message: "Sesión cerrada" });
 		}
 
-		return response.status(200).json({ message: "signed out" });
+		await entityManager.delete(Session, { _id: id });
+		return response.status(200).json({ message: "Sesión cerrada" });
 	}
 }
