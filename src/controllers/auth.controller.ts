@@ -71,26 +71,27 @@ export class AuthController extends BaseController {
 	public async signout(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
 		const entityManager: EntityManager = getManager();
-		const session = await entityManager.findOne(Session, { _id: id });
+		const session = await entityManager.findOne(Session, { user_id: id });
 
 		if (!session) {
 			return response.status(400).json({ message: "Sesión cerrada" });
 		}
 
-		await entityManager.delete(Session, { _id: id });
+		await entityManager.delete(Session, { user_id: id });
 		return response.status(200).json({ message: "Sesión cerrada" });
 	}
 
 	@Get('valid/:token')
 	public async valid(request: Request, response: Response) {
 		const token = request.params.token;
+		const now = moment();
 		const entityManager = getManager();
 		let payload: Payload;
 
 		try {
 			payload = jwt.verify(token, "personal_access_token") as Payload;
 		} catch {
-			return response.status(400).json({ message: "Error en la firma digital" });
+			return response.status(400).send(false);
 		}
 
 		const filter = new ObjectId(payload.id);
@@ -100,8 +101,13 @@ export class AuthController extends BaseController {
 		console.log(session?.token);
 
 		if (!compare) {
-			return response.status(400).json({ message: "Sesion invalida, vuelva a iniciar sesion" });
+			return response.status(400).send(false);
 		}
-		return response.status(200).json({message: 'Sesion valida'});
+
+		if (now.isSameOrAfter(session?.expired_at)) {
+			return response.status(400).send(false);
+		}
+
+		return response.status(200).send(true);
 	}
 }
