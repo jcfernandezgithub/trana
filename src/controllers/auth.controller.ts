@@ -91,7 +91,7 @@ export class AuthController extends BaseController {
 		try {
 			payload = jwt.verify(token, "personal_access_token") as Payload;
 		} catch {
-			return response.status(400).send(false);
+			return response.send(false);
 		}
 
 		const filter = new ObjectId(payload.id);
@@ -101,13 +101,13 @@ export class AuthController extends BaseController {
 		console.log(session?.token);
 
 		if (!compare) {
-			return response.status(400).send(false);
+			return response.send(false);
 		}
 
 		if (now.isSameOrAfter(session?.expired_at)) {
-			return response.status(400).send(false);
+			return response.send(false);
 		}
 
-		return response.status(200).send(true);
+		return response.send(true);
 	}
 }
