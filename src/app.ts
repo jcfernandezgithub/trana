@@ -91,6 +91,11 @@ export default class App extends Server {
 				socket.emit('reader', user);
 			});
 
+			socket.on('get_reseller_by_id', async (id) => {
+				const filter: ObjectId = new ObjectId(id);
+				const user: User = await entityManager.findOneOrFail(User, { where: { _id: filter } });
+				socket.emit('reseller', user);
+			});
 		});
 	}
 }
