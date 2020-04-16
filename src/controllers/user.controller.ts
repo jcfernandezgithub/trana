@@ -308,10 +308,6 @@ export class UserController extends BaseController {
 			return response.status(400).json(res);
 		}
 
-		let res = {
-			message: "El usuario ha sido verificado"
-		}
-
 		return response.render('success');
 	}
 
