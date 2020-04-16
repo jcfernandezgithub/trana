@@ -11,6 +11,7 @@ import { Router } from "./router/router.class";
 import SocketIO from 'socket.io';
 import { createConnection, getManager } from 'typeorm';
 import { User } from './entities/user.entity';
+import { Opening } from './entities/opening.entity';
 
 export default class App extends Server {
 	private close: http.Server;
@@ -64,12 +65,20 @@ export default class App extends Server {
 
 		io.on('connection', (socket: SocketIO.Socket) => {
 			console.log('New socket has been connected: ', socket.id);
+			
+			const entityManager = getManager();
 
-			socket.on('update_users', async (id) => {
-				const entityManager = getManager();
+			socket.on('update_users', async () => {
 				const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }, { role: 'reader' }] }, order: { role: 'ASC' } });
 				socket.emit('users', users);
-			})
+			});
+
+			socket.on('update_opening', async () => {
+				const openings: Opening[] = await entityManager.find(Opening);
+				socket.emit('openings', openings);
+			});
+
+			
 		});
 	}
 }
