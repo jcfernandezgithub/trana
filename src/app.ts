@@ -85,6 +85,11 @@ export default class App extends Server {
 				socket.emit('user', user);
 			});
 
+			socket.on('get_reader_by_id', async (id) => {
+				const filter: ObjectId = new ObjectId(id);
+				const user: User = await entityManager.findOneOrFail(User, { where: { _id: filter } });
+				socket.emit('reader', user);
+			});
 
 		});
 	}
