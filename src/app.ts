@@ -68,8 +68,7 @@ export default class App extends Server {
 			socket.on('message', async (id) => {
 				const entityManager = getManager();
 				let users = await entityManager.find(User);
-				console.log(socket.id, users)
-				socket.emit('users', { name: 'lala' });
+				socket.emit('users', users);
 			})
 		});
 	}
