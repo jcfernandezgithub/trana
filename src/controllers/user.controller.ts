@@ -27,6 +27,12 @@ export class UserController extends BaseController {
 			return response.status(400).json({ "message": "El usuario ya existe" });
 		}
 
+		const v = await entityManager.findOne(Verify, { where: { email: request.body.email } });
+
+		if(v) {
+			await entityManager.delete(Verify, { where: { email: request.body.email } });
+		} 
+
 		let user: User = new User();
 		user.email = request.body.email;
 		user.name = request.body.name;
@@ -45,6 +51,7 @@ export class UserController extends BaseController {
 
 		verify.email = saved.email;
 		verify.token = await verify.tokenCreate();
+
 
 		const verify_saved = await entityManager.save(Verify, verify);
 
