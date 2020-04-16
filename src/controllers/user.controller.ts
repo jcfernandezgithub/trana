@@ -312,7 +312,7 @@ export class UserController extends BaseController {
 			message: "El usuario ha sido verificado"
 		}
 
-		return response.status(200).json(res);
+		return response.render('success');
 	}
 
 	@Delete('delete/:id')
