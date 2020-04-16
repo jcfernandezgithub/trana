@@ -63,6 +63,10 @@ export default class App extends Server {
 
 		io.on('connection', (socket: SocketIO.Socket) => {
 			console.log('New socket has been connected: ', socket.id);
+
+			socket.on('message', id => {
+				console.log(id);
+			})
 		});
 	}
 }
