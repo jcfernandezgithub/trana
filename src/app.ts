@@ -82,7 +82,6 @@ export default class App extends Server {
 			socket.on('user_by_id', async (id) => {
 				const filter: ObjectId = new ObjectId(id);
 				const user: User = await entityManager.findOneOrFail(User, { where: { _id: filter } });
-				console.log(id, user);
 				socket.emit('user', user);
 			});
 
