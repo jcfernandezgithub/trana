@@ -9,7 +9,8 @@ import hbs from "express-handlebars";
 import { Server } from "@overnightjs/core";
 import { Router } from "./router/router.class";
 import SocketIO from 'socket.io';
-import { createConnection, createConnections } from 'typeorm';
+import { createConnection, createConnections, getManager } from 'typeorm';
+import { User } from './entities/user.entity';
 
 export default class App extends Server {
 	private close: http.Server;
@@ -64,8 +65,10 @@ export default class App extends Server {
 		io.on('connection', (socket: SocketIO.Socket) => {
 			console.log('New socket has been connected: ', socket.id);
 
-			socket.on('message', id => {
-				console.log(id);
+			socket.on('message', async (id) => {
+				const entityManager = getManager();
+				let user = await entityManager.find(User);
+				socket.to(socket.id).emit('users', user);
 			})
 		});
 	}
