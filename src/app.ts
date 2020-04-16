@@ -69,7 +69,7 @@ export default class App extends Server {
 				const entityManager = getManager();
 				let users = await entityManager.find(User);
 				console.log(socket.id, users)
-				socket.to(socket.id).emit('users', users);
+				socket.to(socket.id).emit('users', {name: 'lala'});
 			})
 		});
 	}
