@@ -13,6 +13,7 @@ import { createConnection, getManager } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Opening } from './entities/opening.entity';
 import { ObjectId } from 'mongodb';
+import { Ticket } from './entities/ticket.entity';
 
 export default class App extends Server {
 	private close: http.Server;
@@ -96,6 +97,12 @@ export default class App extends Server {
 				const user: User = await entityManager.findOneOrFail(User, { where: { _id: filter } });
 				socket.emit('reseller', user);
 			});
+
+			socket.on('get_tickets_by_user', async (id) => {
+				const filter: ObjectId = new ObjectId(id);
+				let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: filter }, order: { createdAt: 'DESC' } });
+				socket.emit('tickets', tickets);
+			})
 		});
 	}
 }
