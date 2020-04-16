@@ -73,6 +73,7 @@ export default class App extends Server {
 			socket.on('update_users', async () => {
 				const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }, { role: 'reader' }] }, order: { role: 'ASC' } });
 				socket.emit('users', users);
+				socket.broadcast.emit('users', users);
 			});
 
 			socket.on('update_openings', async () => {
