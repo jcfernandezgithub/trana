@@ -12,6 +12,7 @@ import SocketIO from 'socket.io';
 import { createConnection, getManager } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Opening } from './entities/opening.entity';
+import { ObjectId } from 'mongodb';
 
 export default class App extends Server {
 	private close: http.Server;
@@ -79,7 +80,8 @@ export default class App extends Server {
 			});
 
 			socket.on('user_by_id', async (id) => {
-				const user: User = await entityManager.findOneOrFail(User, { where: { _id: id } });
+				const filter: ObjectId = new ObjectId(id);
+				const user: User = await entityManager.findOneOrFail(User, { where: { _id: filter } });
 				socket.emit('user', user);
 			});
 
