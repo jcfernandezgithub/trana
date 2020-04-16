@@ -65,7 +65,7 @@ export default class App extends Server {
 
 		io.on('connection', (socket: SocketIO.Socket) => {
 			console.log('New socket has been connected: ', socket.id);
-			
+
 			const entityManager = getManager();
 
 			socket.on('update_users', async () => {
@@ -73,12 +73,17 @@ export default class App extends Server {
 				socket.emit('users', users);
 			});
 
-			socket.on('update_opening', async () => {
+			socket.on('update_openings', async () => {
 				const openings: Opening[] = await entityManager.find(Opening);
 				socket.emit('openings', openings);
 			});
 
-			
+			socket.on('user_by_id', async (id) => {
+				const user: User = await entityManager.findOneOrFail(User, { where: { _id: id } });
+				socket.emit('user', user);
+			});
+
+
 		});
 	}
 }
