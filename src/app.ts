@@ -99,7 +99,7 @@ export default class App extends Server {
 			});
 
 			socket.on('get_tickets_by_user', async (id) => {
-				const filter: ObjectId = new ObjectId(id);
+				const filter: string = id;
 				let tickets: Ticket[] = await entityManager.find(Ticket, { where: { createdBy: filter }, order: { createdAt: 'DESC' } });
 				console.log(tickets, id);
 				socket.emit('tickets', tickets);
