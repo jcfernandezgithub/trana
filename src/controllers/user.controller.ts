@@ -18,8 +18,6 @@ export class UserController extends BaseController {
 	@Post('create')
 	@Middleware([session])
 	public async create(request: Request, response: Response) {
-
-		const self = this;
 		let entityManager: EntityManager = getManager();
 		let u: User | undefined = await entityManager.findOne(User, { email: request.body.email });
 

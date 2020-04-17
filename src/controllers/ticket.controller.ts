@@ -26,7 +26,6 @@ export class TicketController extends BaseController {
 	@Get('show/:id')
 	@Middleware([session])
 	public async show(request: Request, response: Response) {
-		const self = this;
 		const id = request.params.id;
 		const entityManager: EntityManager = getManager();
 
@@ -36,6 +35,25 @@ export class TicketController extends BaseController {
 			return response.status(400).json({ message: 'No existe entrada' });
 		}
 		return response.status(200).json(tickets);
+	}
+
+	@Post('edit/:id')
+	public async update(request: Request, response: Response) {
+		const entityManager: EntityManager = getManager();
+		const id: ObjectId = new ObjectId(request.params.id);
+
+		const update = {
+			gid: request.body.gid,
+			owner: request.body.owner
+		}
+
+		const updated = await entityManager.update(Ticket, { _id: id }, update);
+
+		if (!updated) {
+			return response.status(400).json({ message: "Error" });
+		}
+
+		return response.status(200).json({ message: "Actualizado" });
 	}
 
 	@Post('create')
@@ -133,19 +151,19 @@ export class TicketController extends BaseController {
 		}
 
 		const deleted = await entityManager.delete(Ticket, { _id: id });
-		
+
 		let stock = user.stock + 1;
 
 		let updated = await entityManager.update(User, { _id: user_id }, { stock: stock });
 
-		if(!updated) {
+		if (!updated) {
 			return response.status(200).json({ message: "Error al elimiar" });
 		}
 
 		if (!deleted) {
 			return response.status(200).json({ message: "Error al elimiar" });
 		}
-		
+
 		return response.status(200).json({ message: "La entrada ha sido eliminada" });
 	}
 
