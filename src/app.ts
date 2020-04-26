@@ -78,7 +78,7 @@ export default class App extends Server {
 			});
 
 			socket.on('get_resellers_limited', async () => {
-				const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reader' }] }, take: 3 ,order: { role: 'ASC' } });
+				const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }] }, take: 5 ,order: { role: 'ASC' } });
 				socket.emit('resellers_limited', users);
 				socket.broadcast.emit('reseller_limited', users);
 			});
