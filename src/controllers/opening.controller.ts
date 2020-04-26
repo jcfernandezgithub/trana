@@ -1,13 +1,12 @@
 import { Controller, Get, Post, Delete, Middleware } from "@overnightjs/core";
 import { EntityManager, getManager } from "typeorm";
-import { BaseController } from "./base.controller";
 import { Request, Response } from "express";
 import { Opening } from "../entities/opening.entity";
 import { ObjectId } from "mongodb";
 import { session } from "../middlewares/session.middleware";
 
 @Controller('api/opening')
-export class OpeningController extends BaseController {
+export class OpeningController {
 	
 	@Get('show')
 	@Middleware([session])

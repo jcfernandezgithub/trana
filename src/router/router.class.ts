@@ -4,6 +4,7 @@ import { AdminController } from '../controllers/admin.controller';
 import { TicketController } from '../controllers/ticket.controller';
 import { TestController } from '../controllers/test.controller';
 import { OpeningController } from '../controllers/opening.controller';
+import { ServiceController } from '../controllers/service.controller';
 
 export class Router {
 	public userController = new UserController();
@@ -12,4 +13,6 @@ export class Router {
 	public ticketController = new TicketController();
 	public testController = new TestController();
 	public openingController = new OpeningController();
+	public serviceController = new ServiceController();
+
 }

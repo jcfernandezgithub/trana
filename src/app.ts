@@ -51,7 +51,8 @@ export default class App extends Server {
 			router.adminController,
 			router.ticketController,
 			router.testController,
-			router.openingController
+			router.openingController,
+			router.serviceController
 		]);
 	}
 
@@ -74,6 +75,12 @@ export default class App extends Server {
 				const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }, { role: 'reader' }] }, order: { role: 'ASC' } });
 				socket.emit('users', users);
 				socket.broadcast.emit('users', users);
+			});
+
+			socket.on('get_resellers_limited', async () => {
+				const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reader' }] }, take: 3 ,order: { role: 'ASC' } });
+				socket.emit('resellers_limited', users);
+				socket.broadcast.emit('reseller_limited', users);
 			});
 
 			socket.on('update_openings', async () => {

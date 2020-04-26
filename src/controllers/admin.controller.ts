@@ -2,8 +2,7 @@ import { Response, Request } from "express";
 import { Controller, Post } from "@overnightjs/core";
 import { Opening } from "../entities/opening.entity";
 import { Connection } from "typeorm";
-import { BaseController } from "./base.controller";
 
 @Controller('api/admin')
-export class AdminController extends BaseController {
+export class AdminController {
 }

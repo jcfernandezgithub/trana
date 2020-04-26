@@ -29,7 +29,7 @@ export class User extends BaseEntity {
 
 	@Column()
 	public role: string;
-
+	
 	@Column({
 		unique: true
 	})

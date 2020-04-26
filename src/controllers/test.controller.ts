@@ -2,15 +2,13 @@ import { Controller, Get } from "@overnightjs/core";
 import { Response, Request } from "express";
 import { ObjectId } from "mongodb";
 import { Ticket } from "../entities/ticket.entity";
-import { BasicController } from './basic.controller';
 import { Connection, EntityManager } from "typeorm";
-import { BaseController } from "./base.controller";
 import { getManager } from "typeorm";
 import { User } from "../entities/user.entity";
 
 
 @Controller('api/test')
-export class TestController extends BaseController {
+export class TestController {
 
 	@Get('search/:id')
 	public async show(request: Request, response: Response) {

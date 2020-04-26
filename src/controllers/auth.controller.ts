@@ -1,5 +1,4 @@
 import { Response, Request } from "express";
-import { BaseController } from "./base.controller";
 import { EntityManager, getManager } from "typeorm";
 import { User } from "../entities/user.entity";
 import { Controller, Get, Post } from "@overnightjs/core";
@@ -14,7 +13,7 @@ interface Payload {
 }
 
 @Controller('api/auth')
-export class AuthController extends BaseController {
+export class AuthController {
 	@Post('signin')
 	public async signin(request: Request, response: Response) {
 

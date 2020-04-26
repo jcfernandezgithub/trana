@@ -5,7 +5,6 @@ import { Response, Request } from "express";
 import { User } from "../entities/user.entity";
 import { Reset } from '../entities/reset.entity';
 import { Verify } from '../entities/verify.entity';
-import { BaseController } from "./base.controller";
 import { EntityManager, getManager } from "typeorm";
 import { Session } from "../entities/session.entity";
 import { mailOptions, Mailer } from '../libs/mailer';
@@ -13,7 +12,7 @@ import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/c
 import { session } from '../middlewares/session.middleware';
 
 @Controller('api/user')
-export class UserController extends BaseController {
+export class UserController {
 
 	@Post('create')
 	@Middleware([session])

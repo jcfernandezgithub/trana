@@ -8,7 +8,6 @@ import { QRCode } from "../libs/qr.code";
 import { Response, Request } from "express";
 import { User } from '../entities/user.entity';
 import { Ticket } from "../entities/ticket.entity";
-import { BaseController } from "./base.controller";
 import { EntityManager, getManager } from "typeorm";
 import { Mailer, mailOptions } from "../libs/mailer";
 import { Opening } from '../entities/opening.entity';
@@ -21,7 +20,7 @@ interface Payload {
 }
 
 @Controller('api/ticket')
-export class TicketController extends BaseController {
+export class TicketController {
 
 	@Get('show/:id')
 	@Middleware([session])
