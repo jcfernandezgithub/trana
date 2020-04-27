@@ -37,7 +37,7 @@ export class ClubController {
 	public async delete(request: Request, response: Response) {
 		const manager: EntityManager = getManager();
 		const id: ObjectId = new ObjectId(request.params.id);
-
+		console.log(id);
 		let deleted = await manager.delete(Club, { where: { _id: id } });
 
 		if (!deleted) {
