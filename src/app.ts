@@ -84,8 +84,8 @@ export default class App extends Server {
 				socket.broadcast.emit('reseller_limited', users);
 			});
 
-			socket.on('update_openings', async () => {
-				const openings: Opening[] = await entityManager.find(Opening, { order: { createdAt: 'DESC' } });
+			socket.on('get_openings_by_club', async (id) => {
+				const openings: Opening[] = await entityManager.find(Opening, { where: { club_id: id }, order: { createdAt: 'DESC' } });
 				socket.emit('openings', openings);
 				socket.broadcast.emit('openings', openings);
 			});
