@@ -10,6 +10,9 @@ export class Club {
 	name: string;
 
 	@Column()
+	address: string;
+
+	@Column()
 	description: string;
 
 	@Column()
