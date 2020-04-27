@@ -12,6 +12,9 @@ export class Opening extends BaseEntity {
 	@Column()
 	close: Date;
 
+	@Column()
+	club_id: string;
+
 	@CreateDateColumn({
 		type: "timestamp",
 		default: () => "CURRENT_TIMESTAMP(6)"

@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import { Opening } from "../entities/opening.entity";
 import { ObjectId } from "mongodb";
 import { session } from "../middlewares/session.middleware";
+import { OK, BAD_REQUEST } from "http-status-codes";
 
 @Controller('api/opening')
 export class OpeningController {
@@ -36,23 +37,15 @@ export class OpeningController {
 	}
 
 	@Post('create')
-	@Middleware([session])
 	public async create(request: Request, response: Response) {
-
-		const name: string = request.body.name;
-		const close: Date = request.body.close;
-		let opening: Opening = new Opening();
-
-		opening.name = name.toLocaleLowerCase();
-		opening.close = close;
-
+		let opening: Opening = request.body;
 		const entityManager: EntityManager = getManager();
 		const saved: Opening = await entityManager.save(Opening, opening);
 
 		if (!saved) {
-			return response.status(400).json({ message: 'Error al guardar' });
+			return response.status(BAD_REQUEST).json({ message: 'Error al guardar' });
 		}
-		return response.status(200).json({ message: 'Guardado' });
+		return response.status(OK).json({ message: 'Guardado' });
 	}
 
 	@Delete('delete/:id')
