@@ -38,7 +38,7 @@ export class ClubController {
 		const manager: EntityManager = getManager();
 		const id: ObjectId = new ObjectId(request.params.id);
 		console.log(id);
-		let deleted = await manager.delete(Club, { where: { _id: id } });
+		let deleted = await manager.delete(Club, { _id: id });
 
 		if (!deleted) {
 			return response.status(BAD_REQUEST).json({ message: "Error al eliminar" });
