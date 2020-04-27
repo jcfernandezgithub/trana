@@ -86,6 +86,7 @@ export default class App extends Server {
 
 			socket.on('get_openings_by_club', async (id) => {
 				const openings: Opening[] = await entityManager.find(Opening, { where: { club_id: id }, order: { createdAt: 'DESC' } });
+				console.log(openings, id)
 				socket.emit('openings', openings);
 				socket.broadcast.emit('openings', openings);
 			});
