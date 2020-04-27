@@ -5,6 +5,7 @@ import { TicketController } from '../controllers/ticket.controller';
 import { TestController } from '../controllers/test.controller';
 import { OpeningController } from '../controllers/opening.controller';
 import { ServiceController } from '../controllers/service.controller';
+import { ClubController } from '../controllers/club.controller';
 
 export class Router {
 	public userController = new UserController();
@@ -14,5 +15,5 @@ export class Router {
 	public testController = new TestController();
 	public openingController = new OpeningController();
 	public serviceController = new ServiceController();
-
+	public clubController = new ClubController();
 }

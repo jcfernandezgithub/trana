@@ -1,4 +1,3 @@
-
 import cors from 'cors';
 import http from 'http';
 import path from "path";
@@ -14,6 +13,7 @@ import { User } from './entities/user.entity';
 import { Opening } from './entities/opening.entity';
 import { ObjectId } from 'mongodb';
 import { Ticket } from './entities/ticket.entity';
+import { Club } from './entities/club.entity';
 
 export default class App extends Server {
 	private close: http.Server;
@@ -52,7 +52,8 @@ export default class App extends Server {
 			router.ticketController,
 			router.testController,
 			router.openingController,
-			router.serviceController
+			router.serviceController,
+			router.clubController
 		]);
 	}
 
@@ -78,7 +79,7 @@ export default class App extends Server {
 			});
 
 			socket.on('get_resellers_limited', async () => {
-				const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }] }, take: 5 ,order: { role: 'ASC' } });
+				const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }] }, take: 5, order: { role: 'ASC' } });
 				socket.emit('resellers_limited', users);
 				socket.broadcast.emit('reseller_limited', users);
 			});
@@ -112,7 +113,14 @@ export default class App extends Server {
 				let tickets: Ticket[] = await entityManager.find(Ticket, { where: { createdBy: filter }, order: { createdAt: 'DESC' } });
 				console.log(tickets, id);
 				socket.emit('tickets', tickets);
-			})
+			});
+
+			socket.on('get_clubs_by_user', async (id: string) => {
+				let clubs: Club[] = await entityManager.find(Club, { where: { user_id: id } });
+				console.log(clubs, id);
+				socket.emit('clubs', clubs);
+			});
+
 		});
 	}
 }
