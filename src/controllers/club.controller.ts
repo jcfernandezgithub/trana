@@ -13,7 +13,6 @@ export class ClubController {
 		const manager: EntityManager = getManager();
 		let club: Club = request.body;
 		let saved = await manager.save(Club, club);
-
 		if (!saved) {
 			return response.status(BAD_REQUEST).json({ message: 'Error al guardar' });
 		}
@@ -24,9 +23,7 @@ export class ClubController {
 	public async showById(request: Request, response: Response) {
 		const manager: EntityManager = getManager();
 		const filter = request.params.user_id;
-
 		let clubs: Club[] = await manager.find(Club, { where: { user_id: filter } });
-
 		if (!clubs) {
 			return response.status(BAD_REQUEST).json({ message: 'No se encontro clubs' });
 		}
@@ -39,7 +36,6 @@ export class ClubController {
 		const id: ObjectId = new ObjectId(request.params.id);
 		console.log(id);
 		let deleted = await manager.delete(Club, { _id: id });
-
 		if (!deleted) {
 			return response.status(BAD_REQUEST).json({ message: "Error al eliminar" });
 		}

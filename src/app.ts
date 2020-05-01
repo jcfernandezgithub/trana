@@ -1,4 +1,5 @@
 import cors from 'cors';
+import fs from 'fs';
 import http from 'http';
 import path from "path";
 import bodyParser from 'body-parser';
@@ -6,7 +7,6 @@ import morgan from 'morgan';
 import express from 'express';
 import hbs from "express-handlebars";
 import { Server } from "@overnightjs/core";
-import { Router } from "./router/router.class";
 import SocketIO from 'socket.io';
 import { createConnection, getManager } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -33,7 +33,7 @@ export default class App extends Server {
 		this.app.use(express.json())
 		this.app.use(bodyParser.urlencoded({ extended: true }));
 		this.app.use(morgan('dev'));
-		this.setupControllers();
+		this.router();
 
 		createConnection().then(connection => {
 			console.log(connection.name);
@@ -42,19 +42,23 @@ export default class App extends Server {
 		});
 	}
 
-	private setupControllers() {
-		let router = new Router();
+	router() {
+		const files: string[] | Buffer[] = fs.readdirSync(__dirname + '/controllers/');
+		files.forEach(async (e) => {
+			let module = this.parser(e);
+			import(`${__dirname}/controllers/${path.parse(e).name}`).then(m => super.addControllers(new m[module])).catch(e => console.log(e));
+		});
+	}
 
-		super.addControllers([
-			router.userController,
-			router.authController,
-			router.adminController,
-			router.ticketController,
-			router.testController,
-			router.openingController,
-			router.serviceController,
-			router.clubController
-		]);
+	parser(filename: string): string {
+		let response = path.parse(filename).name;
+		return this.capitalizer(response);
+	}
+
+	capitalizer(str: string): string {
+		let response = str.charAt(0).toUpperCase() + str.slice(1);
+		response = response.replace('controller', 'Controller');
+		return response.replace('.', '');
 	}
 
 	init() {

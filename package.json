@@ -33,6 +33,7 @@
    "dependencies": {
       "@overnightjs/core": "^1.6.12",
       "@types/nodemailer": "^6.4.0",
+      "autoloader-ts": "^2.2.1",
       "bcryptjs": "^2.4.3",
       "copyfiles": "^2.1.1",
       "cors": "^2.8.5",
