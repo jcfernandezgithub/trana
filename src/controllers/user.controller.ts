@@ -29,10 +29,11 @@ export class UserController {
 			await entityManager.delete(Verify, { where: { email: request.body.email } });
 		} 
 
-		let user: User = request.body;;
+		let user: User = request.body;
 		user.verified = false;
-		user.password = await user.encrypt(request.body.password);
-
+		user.password = user.encrypt(request.body.password);
+		console.log(user);
+		
 		const saved: User = await entityManager.save(User, user);
 
 		let verify = new Verify();
