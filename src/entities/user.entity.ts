@@ -62,7 +62,7 @@ export class User extends BaseEntity {
 	public updatedAt: Date;
 
 
-	public async encrypt(password: string): Promise<string> {
+	public encrypt(password: string): string {
 		const salt = bcrypt.genSaltSync(10);
 		return bcrypt.hashSync(password, salt);
 	}

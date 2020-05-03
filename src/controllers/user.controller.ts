@@ -33,7 +33,6 @@ export class UserController {
 		user.verified = false;
 		user.password = await user.encrypt(request.body.password);
 
-
 		const saved: User = await entityManager.save(User, user);
 
 		let verify = new Verify();
