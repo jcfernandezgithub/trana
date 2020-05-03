@@ -30,16 +30,9 @@ export class UserController {
 		} 
 
 		let user: User = new User();
-		user.email = request.body.email;
-		user.name = request.body.name;
-		user.last_name = request.body.last_name;
-		user.status = request.body.status;
-		user.role = request.body.role;
-		user.age = request.body.age;
-		user.stock = request.body.stock;
-		user.phone = request.body.phone;
+		user = request.body;
 		user.verified = false;
-		user.password = await user.encrypt(request.body.password);
+		user.password = user.encrypt(request.body.password);
 
 		const saved: User = await entityManager.save(User, user);
 
