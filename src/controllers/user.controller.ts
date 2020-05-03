@@ -15,7 +15,6 @@ import { session } from '../middlewares/session.middleware';
 export class UserController {
 
 	@Post('create')
-	@Middleware([session])
 	public async create(request: Request, response: Response) {
 		let entityManager: EntityManager = getManager();
 		let u: User | undefined = await entityManager.findOne(User, { email: request.body.email });
