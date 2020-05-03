@@ -32,7 +32,7 @@ export class UserController {
 		let user: User = new User();
 		user = request.body;
 		user.verified = false;
-		user.password = user.encrypt(request.body.password);
+		user.password = await user.encrypt(request.body.password);
 
 		const saved: User = await entityManager.save(User, user);
 
@@ -242,7 +242,7 @@ export class UserController {
 
 		const filter = { email: reset.email };
 		const user = new User();
-		const new_password: string = user.encrypt(password);
+		const new_password: string = await user.encrypt(password);
 		const update = { password: new_password };
 		const doc = await entityManager.update(User, filter, update);
 
