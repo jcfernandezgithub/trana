@@ -1,13 +1,33 @@
 import bcrypt from 'bcryptjs';
-import { ObjectID } from "mongodb";
-import { BaseEntity } from "./base.entity";
+import { ObjectID, ObjectId } from "mongodb";
 import { Entity, Column, CreateDateColumn, UpdateDateColumn, ObjectIdColumn } from "typeorm";
 
+export interface IUser {
+	_id: ObjectId;
+	name: string;
+	age: number;
+	last_name: string;
+	photo: string;
+	phone: string;
+	status: boolean;
+	verified: boolean;
+	role: string;
+	email: string;
+	password: string;
+	stock: number;
+	session_id: ObjectId;
+	createdAt: Date;
+	updatedAt: Date;
+	encrypt_password(password: string): string;
+	compare(password: string, resellerPassword: string): Promise<boolean>;
+	available(stock: number): boolean;
+}
+
 @Entity()
-export class User extends BaseEntity {
+export class User implements IUser{
 
 	@ObjectIdColumn()
-	public _id: ObjectID;
+	public _id: ObjectId;
 
 	@Column()
 	public name: string;
@@ -29,7 +49,7 @@ export class User extends BaseEntity {
 
 	@Column()
 	public role: string;
-	
+
 	@Column({
 		unique: true
 	})
@@ -44,10 +64,8 @@ export class User extends BaseEntity {
 	@Column()
 	phone: string;
 
-	@Column({
-		default: null
-	})
-	session_id: ObjectID;
+	@Column()
+	session_id: ObjectId;
 
 	@CreateDateColumn({
 		type: "timestamp",
@@ -62,16 +80,16 @@ export class User extends BaseEntity {
 	public updatedAt: Date;
 
 
-	public encrypt(password: string): string {
+	encrypt_password(password: string): string {
 		const salt = bcrypt.genSaltSync(10);
 		return bcrypt.hashSync(password, salt);
 	}
 
-	public async compare(password: string, resellerPassword: string): Promise<boolean> {
+	async compare(password: string, resellerPassword: string): Promise<boolean> {
 		return await bcrypt.compare(password, resellerPassword);
 	}
 
-	public available(stock: number): boolean {
+	available(stock: number): boolean {
 		return stock <= 0;
 	}
 

@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 import multer from '../libs/multer';
 import moment, { Moment } from 'moment'
 import { Response, Request } from "express";
-import { User } from "../entities/user.entity";
+import { User, IUser } from "../entities/user.entity";
 import { Reset } from '../entities/reset.entity';
 import { Verify } from '../entities/verify.entity';
 import { EntityManager, getManager } from "typeorm";
@@ -29,11 +29,14 @@ export class UserController {
 			await entityManager.delete(Verify, { where: { email: request.body.email } });
 		} 
 
-		let user: User = request.body;
+		let user = new User();
+		user.name = request.body.name;
+		user.last_name = request.body.last_name;
+		user.email = request.body.email;
+		user.status = request.body.status;
 		user.verified = false;
-		user.password = user.encrypt(request.body.password);
-		console.log(user);
-		
+		user.password = user.encrypt_password(request.body.password);
+	
 		const saved: User = await entityManager.save(User, user);
 
 		let verify = new Verify();
@@ -41,8 +44,7 @@ export class UserController {
 		verify.email = saved.email;
 		verify.token = await verify.tokenCreate();
 
-
-		const verify_saved = await entityManager.save(Verify, verify);
+		const verify_saved: Verify = await entityManager.save(Verify, verify);
 
 		const url = `${request.protocol}://${request.get('host')}/api/user/confirm/${verify_saved.email}/${encodeURIComponent(verify_saved.token.toString())}`;
 
@@ -242,7 +244,7 @@ export class UserController {
 
 		const filter = { email: reset.email };
 		const user = new User();
-		const new_password: string = await user.encrypt(password);
+		const new_password: string = await user.encrypt_password(password);
 		const update = { password: new_password };
 		const doc = await entityManager.update(User, filter, update);
 
