@@ -46,7 +46,7 @@ export default class App extends Server {
 		const files: string[] | Buffer[] = fs.readdirSync(__dirname + '/controllers/');
 		files.forEach(async (e) => {
 			let module = this.parser(e);
-			import(`${__dirname}/controllers/${path.parse(e).name}`).then(m => super.addControllers(new m[module])).catch(e => console.log(e));
+			import(`${__dirname}/controllers/${path.parse(e).name}`).then((m) => this.addControllers(new m[module])).catch(e => console.log(e));
 		});
 	}
 
