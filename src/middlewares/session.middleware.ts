@@ -4,6 +4,7 @@ import { Session } from "../entities/session.entity";
 import { Request, Response, NextFunction } from 'express';
 import { getManager, EntityManager } from "typeorm";
 import { ObjectId } from 'mongodb';
+import config from '../config/global.config';
 
 interface IPayload {
 	id: string;
@@ -24,7 +25,7 @@ export const session = async (request: Request, response: Response, next: NextFu
 	let payload: IPayload;
 
 	try {
-		payload = jwt.verify(token, process.env.key || 'personal_access_token') as IPayload;
+		payload = jwt.verify(token, config.JWT_KEY) as IPayload;
 	}
 	catch {
 		let res = {

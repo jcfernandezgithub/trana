@@ -6,6 +6,7 @@ import { Session } from "../entities/session.entity";
 import jwt from 'jsonwebtoken';
 import moment from "moment";
 import { ObjectId } from "mongodb";
+import config from '../config/global.config';
 
 interface Payload {
 	id: string;
@@ -43,7 +44,7 @@ export class AuthController {
 			const expire: Date = new Date(moment().add(1, "month").format());
 			let session = new Session();
 			session.user_id = user._id;
-			session.token = jwt.sign({ id: user._id }, 'personal_access_token');
+			session.token = jwt.sign({ id: user._id }, config.JWT_KEY);
 			session.email = user.email;
 			session.role = user.role;
 			session.expired_at = expire;
@@ -56,7 +57,7 @@ export class AuthController {
 
 		const expire: Date = new Date(moment().add(1, "month").format());
 		let session = new Session();
-		session.token = jwt.sign({ id: user._id }, 'personal_access_token');
+		session.token = jwt.sign({ id: user._id }, config.JWT_KEY);
 		session.email = user.email;
 		session.expired_at = expire;
 		const savedSession = await entityManager.save(Session, session);
@@ -88,7 +89,7 @@ export class AuthController {
 		let payload: Payload;
 
 		try {
-			payload = jwt.verify(token, "personal_access_token") as Payload;
+			payload = jwt.verify(token, config.JWT_KEY) as Payload;
 		} catch {
 			return response.send(false);
 		}
