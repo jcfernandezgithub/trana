@@ -36,14 +36,14 @@ export default class App extends Server {
 		this.app.use(morgan('dev'));
 		this.router();
 
-		if (config.ENVIRONMENT == 'development') {
+		if (config.ENVIRONMENT == 'production') {
 			createConnection('development').then(connection => {
 				console.log(connection.name);
 			}).catch(error => {
 				console.log(error);
 			});
 		} else {
-			createConnection('production').then(connection => {
+			createConnection('development').then(connection => {
 				console.log(connection.name);
 			}).catch(error => {
 				console.log(error);
