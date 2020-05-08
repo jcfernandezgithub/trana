@@ -83,7 +83,7 @@ export default class App extends Server {
 		io.on('connection', (socket: SocketIO.Socket) => {
 			console.log('New socket has been connected: ', socket.id);
 
-			const entityManager = getManager();
+			const entityManager = getManager(config.ENVIRONMENT);
 
 			socket.on('update_users', async () => {
 				const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }, { role: 'reader' }] }, order: { role: 'ASC' } });
