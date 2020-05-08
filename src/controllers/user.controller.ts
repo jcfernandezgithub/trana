@@ -10,13 +10,14 @@ import { Session } from "../entities/session.entity";
 import { mailOptions, Mailer } from '../libs/mailer';
 import { Controller, Post, Get, Patch, Delete, Middleware } from "@overnightjs/core";
 import { session } from '../middlewares/session.middleware';
+import config from '../config/global.config';
 
 @Controller('api/user')
 export class UserController {
 
 	@Post('create')
 	public async create(request: Request, response: Response) {
-		let entityManager: EntityManager = getManager();
+		let entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		let u: User | undefined = await entityManager.findOne(User, { email: request.body.email });
 
 		if (u) {
