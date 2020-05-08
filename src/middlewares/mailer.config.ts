@@ -1,15 +1,9 @@
 import path from 'path';
 import nodemailer from 'nodemailer';
-const handlebars = require('nodemailer-express-handlebars');
+import config from '../config/global.config';
 
-const transporter = nodemailer.createTransport({
-	host: 'smtp.hostinger.com.ar',
-	port: 587,
-	auth: {
-		user: 'jcfernandez@jcdeveloper.net',
-		pass: '123456'
-	}
-});
+const handlebars = require('nodemailer-express-handlebars');
+const transporter = nodemailer.createTransport(config.MAILER);
 
 let hbsOptions = {
 	viewEngine: {

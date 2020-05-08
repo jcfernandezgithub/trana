@@ -14,6 +14,7 @@ import { Opening } from './entities/opening.entity';
 import { ObjectId } from 'mongodb';
 import { Ticket } from './entities/ticket.entity';
 import { Club } from './entities/club.entity';
+import config from './config/global.config';
 
 export default class App extends Server {
 	private close: http.Server;
@@ -35,11 +36,19 @@ export default class App extends Server {
 		this.app.use(morgan('dev'));
 		this.router();
 
-		createConnection().then(connection => {
-			console.log(connection.name);
-		}).catch(error => {
-			console.log(error);
-		});
+		if (config.ENVIRONMENT == 'development') {
+			createConnection('development').then(connection => {
+				console.log(connection.name);
+			}).catch(error => {
+				console.log(error);
+			});
+		} else {
+			createConnection('production').then(connection => {
+				console.log(connection.name);
+			}).catch(error => {
+				console.log(error);
+			});
+		}
 	}
 
 	router() {
@@ -63,7 +72,7 @@ export default class App extends Server {
 
 	init() {
 		this.close = this.app.listen(process.env.PORT, () => {
-			console.log('Server listening on port: ' + process.env.PORT);
+			console.log('Server listening on port: ' + config.PORT);
 		});
 	}
 
