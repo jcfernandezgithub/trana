@@ -81,7 +81,7 @@ export class UserController {
 	@Get('show')
 	@Middleware([session])
 	public async show(request: Request, response: Response) {
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		const users: User[] = await entityManager.find(User, { where: { $or: [{ role: 'reseller' }, { role: 'reader' }] }, order: { role: 'ASC' } });
 		return response.status(200).json(users);
 	}
@@ -103,7 +103,7 @@ export class UserController {
 	@Middleware([session])
 	public async showById(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 
 		let user: User | undefined = await entityManager.findOne(User, { _id: id });
 
@@ -121,7 +121,7 @@ export class UserController {
 		const filter = { _id: id };
 		let user: User = request.body;
 
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		let saved = await entityManager.update(User, filter, user);
 
 		if (!saved) {
@@ -137,7 +137,7 @@ export class UserController {
 	public async forgot(request: Request, response: Response) {
 
 		const email: string = request.params.email;
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		const user: User = await entityManager.findOneOrFail(User, { email: email });
 
 		if (!user) {
@@ -268,7 +268,7 @@ export class UserController {
 
 		const id: ObjectId = new ObjectId(request.params.id);
 
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		const updated = await entityManager.update(User, { _id: id }, { photo: request.file.path });
 
 		if (!updated) {
@@ -283,7 +283,7 @@ export class UserController {
 		const self = this;
 		const email = request.params.email;
 		const token = request.params.token;
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		const verify: Verify = await entityManager.findOneOrFail(Verify, { email: email });
 		const verified = verify.compare(verify.token, decodeURIComponent(token));
 
@@ -315,7 +315,7 @@ export class UserController {
 	public async delete(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
 
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 
 		const deleted = await entityManager.delete(User, { _id: id });
 
@@ -328,12 +328,10 @@ export class UserController {
 
 	@Get('valid/:id/:token')
 	public async valid(request: Request, response: Response) {
-
-		const self = this;
 		const id: ObjectId = new ObjectId(request.params.id);
 		const token_1: string = request.params.token;
 
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		let session: Session | undefined = await entityManager.findOne(Session, { _id: id });
 
 		if (!session?.compare(token_1, session.token)) {

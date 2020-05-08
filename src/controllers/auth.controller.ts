@@ -18,7 +18,7 @@ export class AuthController {
 	@Post('signin')
 	public async signin(request: Request, response: Response) {
 
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		const user: User | undefined = await entityManager.findOne(User, { email: request.body.email });
 
 		if (user === undefined) {
@@ -70,7 +70,7 @@ export class AuthController {
 	@Get('signout/:id')
 	public async signout(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		const session = await entityManager.findOne(Session, { _id: id });
 
 		if (!session) {
@@ -85,7 +85,7 @@ export class AuthController {
 	public async valid(request: Request, response: Response) {
 		const token = request.params.token;
 		const now = moment();
-		const entityManager = getManager();
+		const entityManager = getManager(config.ENVIRONMENT);
 		let payload: Payload;
 
 		try {

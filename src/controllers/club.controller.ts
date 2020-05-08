@@ -4,13 +4,14 @@ import { EntityManager, getManager } from "typeorm";
 import { Club } from "../entities/club.entity";
 import { ObjectId } from "mongodb";
 import { OK, BAD_REQUEST } from 'http-status-codes';
+import config from '../config/global.config';
 
 @Controller('api/club')
 export class ClubController {
 
 	@Post('create')
 	public async create(request: Request, response: Response) {
-		const manager: EntityManager = getManager();
+		const manager: EntityManager = getManager(config.ENVIRONMENT);
 		let club: Club = request.body;
 		let saved = await manager.save(Club, club);
 		if (!saved) {
@@ -21,7 +22,7 @@ export class ClubController {
 
 	@Get('show/:user_id')
 	public async showById(request: Request, response: Response) {
-		const manager: EntityManager = getManager();
+		const manager: EntityManager = getManager(config.ENVIRONMENT);
 		const filter = request.params.user_id;
 		let clubs: Club[] = await manager.find(Club, { where: { user_id: filter } });
 		if (!clubs) {
@@ -32,7 +33,7 @@ export class ClubController {
 
 	@Delete('delete/:id')
 	public async delete(request: Request, response: Response) {
-		const manager: EntityManager = getManager();
+		const manager: EntityManager = getManager(config.ENVIRONMENT);
 		const id: ObjectId = new ObjectId(request.params.id);
 		console.log(id);
 		let deleted = await manager.delete(Club, { _id: id });

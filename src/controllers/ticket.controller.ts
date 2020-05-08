@@ -13,6 +13,7 @@ import { Mailer, mailOptions } from "../libs/mailer";
 import { Opening } from '../entities/opening.entity';
 import { session } from '../middlewares/session.middleware';
 import { Controller, Post, Delete, Get, Middleware } from "@overnightjs/core";
+import config from '../config/global.config';
 
 interface Payload {
 	id: string;
@@ -26,7 +27,7 @@ export class TicketController {
 	@Middleware([session])
 	public async show(request: Request, response: Response) {
 		const id = request.params.id;
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 
 		let tickets: Ticket[] | undefined = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: 'DESC' } });
 
@@ -38,7 +39,7 @@ export class TicketController {
 
 	@Post('edit/:id')
 	public async update(request: Request, response: Response) {
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		const id: ObjectId = new ObjectId(request.params.id);
 
 		const update = {
@@ -58,7 +59,7 @@ export class TicketController {
 	@Post('create')
 	@Middleware([session])
 	public async create(request: Request, response: Response) {
-		const entityManager = getManager();
+		const entityManager = getManager(config.ENVIRONMENT);
 		const email: string = request.body.email;
 		const gid: string = request.body.gid;
 		const openingId: ObjectId = new ObjectId(request.body.opening);
@@ -141,7 +142,7 @@ export class TicketController {
 	public async delete(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
 		const user_id: ObjectId = new ObjectId(request.params.user_id);
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 
 		let user: User = await entityManager.findOneOrFail(User, { _id: user_id });
 
@@ -171,7 +172,7 @@ export class TicketController {
 	public async resend(request: Request, response: Response) {
 
 		const id: ObjectId = new ObjectId(request.params.id);
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
 
 		if (!ticket) {
@@ -204,7 +205,7 @@ export class TicketController {
 	public async read(request: Request, response: Response) {
 
 		const id: ObjectId = new ObjectId(request.params.id);
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
 
 		if (!ticket) {
@@ -237,7 +238,7 @@ export class TicketController {
 		if (!token) {
 			return response.status(400).json({ message: 'Firma no valida, verificar origen de la entrada.' });
 		}
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 
 		const id: ObjectId = new ObjectId(token.id);
 		let ticket: Ticket | undefined = await entityManager.findOne(Ticket, { _id: id });
@@ -251,7 +252,7 @@ export class TicketController {
 	@Get('list/:userId')
 	@Middleware([session])
 	public async view(request: Request, response: Response) {
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		const id = request.params.userId;
 
 		let tickets = await entityManager.find(Ticket, { where: { createdBy: id }, order: { createdAt: 'DESC' } });
@@ -262,7 +263,7 @@ export class TicketController {
 	@Middleware([session])
 	public async byOpening(request: Request, response: Response) {
 		const name = request.params.openingName;
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		let tickets = await entityManager.find(Ticket, { where: { opening: name } });
 		return response.status(200).json(tickets);
 	}

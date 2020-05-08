@@ -5,6 +5,8 @@ import { Opening } from "../entities/opening.entity";
 import { ObjectId } from "mongodb";
 import { session } from "../middlewares/session.middleware";
 import { OK, BAD_REQUEST } from "http-status-codes";
+import config from '../config/global.config';
+
 
 @Controller('api/opening')
 export class OpeningController {
@@ -12,7 +14,7 @@ export class OpeningController {
 	@Get('show')
 	@Middleware([session])
 	public async show(request: Request, response: Response) {
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 
 		let openings: Opening[] = await entityManager.find(Opening, { order: { createdAt: 'DESC' } });
 
@@ -26,7 +28,7 @@ export class OpeningController {
 	@Middleware([session])
 	public async showById(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 
 		let opening: Opening | undefined = await entityManager.findOne(Opening, { _id: id });
 
@@ -39,7 +41,7 @@ export class OpeningController {
 	@Post('create')
 	public async create(request: Request, response: Response) {
 		let opening: Opening = request.body;
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 		const saved: Opening = await entityManager.save(Opening, opening);
 
 		if (!saved) {
@@ -52,7 +54,7 @@ export class OpeningController {
 	@Middleware([session])
 	public async delete(request: Request, response: Response) {
 		const id: ObjectId = new ObjectId(request.params.id);
-		const entityManager: EntityManager = getManager();
+		const entityManager: EntityManager = getManager(config.ENVIRONMENT);
 
 		const deleted = await entityManager.delete(Opening, { _id: id });
 
